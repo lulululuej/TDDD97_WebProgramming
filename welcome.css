@@ -1,0 +1,95 @@
+div {
+    display: flex;
+    box-sizing: border-box;
+}
+
+#main {
+    width: 600px;
+    height: 400px;
+    margin: auto;
+    margin-top: 100px;
+}
+
+#logo-img {
+    width: 340px;
+    height: 400px;
+    margin-right: 10px;
+    border: 1.5px solid black;
+}
+
+#login-signup-container {
+    flex-direction: column;
+}
+
+#login {
+    background-color: white;
+    border: 1.5px solid black;
+    width: 250px;
+    min-height: 100px;
+    margin-bottom: 5px;
+    
+}
+
+#signup {
+    background-color: white;
+    border: 1.5px solid black;
+    width: 250px;
+    min-height: 200px;
+    flex-direction: column;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    flex-grow: 1;
+}
+
+body {
+    background-color: #6998CE;
+}
+
+form {
+    margin: 0;
+}
+
+#login-form {
+    width: 100%;
+}
+
+form > div {
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+label {
+    margin: 0;
+    font-size: 15px;
+}
+
+#login-column {
+    flex-direction: column;
+    width: 100%;
+    margin-right: 5px;
+    justify-content: center;
+}
+
+#login-button {
+    width: fit-content;
+    align-self: flex-end;
+}
+
+#sign-text {
+    font-size: 20px;
+    align-self: center;
+    margin: 16px 0;
+}
+
+#gender-drop {
+    width: 63%;
+}
+
+#signup-button {
+    width: fit-content;
+    align-self: flex-end;
+}
+
+input {
+    width: 63%;
+}
