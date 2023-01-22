@@ -1,0 +1,84 @@
+
+<html>
+    <head>
+        <link href="client.css" type="text/css" rel="stylesheet">
+        <script src="client.js" type="text/javascript"></script>
+        <script src="serverstub.js" type="text/javascript"></script>
+        <script id="welcomeview" type="text/view">
+            <div id="main">
+                <div id="logo-img">
+                    <img src="wimage.png"> 
+                </div>
+                <div id="login-signup-container">
+                    <div class="welcome" id="login">
+                        <div id="login-column">
+                            <form method="post" action="" id="login-form">
+                                <div id="email-container">
+                                    <label for="email">Email</label> 
+                                    <input type="text" name="email"> 
+                                </div>
+                                <div id="password-container">
+                                    <label for="password">Password</label> 
+                                    <input type="text" name="password">
+                                </div>
+                            </form>
+                            <button id="login-button">login</button>
+                        </div>
+                        
+                    </div>
+    
+                    <div class="welcome" id="signup">
+                        <h1 id=sign-text>Sign up here</h1>
+                        <form method="post" action="" id="signup-form">
+                            <div id="name-container">
+                                <label for="first-name">First name</label> 
+                                <input type="text" name="first-name"> 
+                            </div>
+                            <div id="family-container">
+                                <label for="family-name">Family name</label> 
+                                <input type="text" name="family-name"> 
+                            </div>
+                            <div id="gender-container">
+                                <label for="gender">Gender</label>
+                                <select name="gender" id="gender-drop">
+                                    <option>Female</option>
+                                    <option>Male</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div id="city-container">
+                                <label for="city">City</label> 
+                                <input type="text" name="city"> 
+                            </div>
+                            <div id="country-container">
+                                <label for="country">Country</label> 
+                                <input type="text" name="country"> 
+                            </div>
+                            <div id="email-container">
+                                <label for="email">Email</label> 
+                                <input type="text" name="email"> 
+                            </div>
+                            <div id="password-container">
+                                <label for="password">Password</label> 
+                                <input type="text" name="password"> 
+                            </div>
+                            <div id="rp-password-container">
+                                <label for="rp-password">Repeat PSW</label> 
+                                <input type="text" name="rp-password"> 
+                            </div>
+                        </form>
+                        <button id="signup-button">SignUp</button>
+                    </div>
+                </div>
+            </div>
+        </script>
+        <script id="profileview">
+            <p>Test text for profile</p>
+        </script>
+    </head>
+    <body>
+        <div id="container">
+
+        </div>
+    </body>
+</html>
