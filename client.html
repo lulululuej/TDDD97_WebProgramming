@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 
 <html>
     <head>
@@ -15,11 +16,11 @@
                             <form method="post" action="" id="login-form">
                                 <div id="email-container">
                                     <label for="email">Email</label> 
-                                    <input type="text" name="email"> 
+                                    <input type="email" name="email" required> 
                                 </div>
                                 <div id="password-container">
                                     <label for="password">Password</label> 
-                                    <input type="text" name="password">
+                                    <input type="password" name="password" required>
                                 </div>
                             </form>
                             <button id="login-button">login</button>
@@ -32,11 +33,11 @@
                         <form method="post" action="" id="signup-form">
                             <div id="name-container">
                                 <label for="first-name">First name</label> 
-                                <input type="text" name="first-name"> 
+                                <input id="firstname-input" type="text" name="first-name" required> 
                             </div>
                             <div id="family-container">
                                 <label for="family-name">Family name</label> 
-                                <input type="text" name="family-name"> 
+                                <input id="familyname-input" type="text" name="family-name" required> 
                             </div>
                             <div id="gender-container">
                                 <label for="gender">Gender</label>
@@ -48,26 +49,26 @@
                             </div>
                             <div id="city-container">
                                 <label for="city">City</label> 
-                                <input type="text" name="city"> 
+                                <input id="city-input" type="text" name="city" required> 
                             </div>
                             <div id="country-container">
                                 <label for="country">Country</label> 
-                                <input type="text" name="country"> 
+                                <input id="country-input" type="text" name="country" required> 
                             </div>
                             <div id="email-container">
                                 <label for="email">Email</label> 
-                                <input type="text" name="email"> 
+                                <input id="email-input" type="text" name="email" required> 
                             </div>
                             <div id="password-container">
                                 <label for="password">Password</label> 
-                                <input type="text" name="password"> 
+                                <input type="text" name="password" id="password-input" min="8" required> 
                             </div>
                             <div id="rp-password-container">
                                 <label for="rp-password">Repeat PSW</label> 
-                                <input type="text" name="rp-password"> 
+                                <input type="text" name="rp-password" id="password-input-rp" required> 
                             </div>
                         </form>
-                        <button id="signup-button">SignUp</button>
+                        <button id="signup-button" onclick="signUp()">SignUp</button>
                     </div>
                 </div>
             </div>
