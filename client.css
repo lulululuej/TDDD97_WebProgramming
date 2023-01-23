@@ -93,3 +93,15 @@ label {
 input {
     width: 63%;
 }
+
+#tab {
+    width: 100%;
+    height: 70px;
+    justify-content: space-around;
+    align-self: flex-end;
+    
+}
+
+.tab-button {
+    width: 100%;
+}

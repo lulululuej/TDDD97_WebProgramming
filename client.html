@@ -16,14 +16,14 @@
                             <form method="post" action="" id="login-form">
                                 <div id="email-container">
                                     <label for="email">Email</label> 
-                                    <input type="email" name="email" required> 
+                                    <input type="email" name="email" id="login-email" required> 
                                 </div>
                                 <div id="password-container">
                                     <label for="password">Password</label> 
-                                    <input type="password" name="password" required>
+                                    <input type="password" name="password" id="login-password" required>
                                 </div>
                             </form>
-                            <button id="login-button">login</button>
+                            <button id="login-button" onclick="signIn()">login</button>
                         </div>
                         
                     </div>
@@ -74,7 +74,11 @@
             </div>
         </script>
         <script id="profileview">
-            <p>Test text for profile</p>
+            <div id="tab">
+                <button class="tab-button">Home</button>
+                <button class="tab-button">Browse</button>
+                <button class="tab-button">Account</button>
+            </div>
         </script>
     </head>
     <body>
