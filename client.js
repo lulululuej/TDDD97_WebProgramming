@@ -21,9 +21,8 @@ window.onload = function() {
 /* Validation off chosen password */
 validatePassword = function() {
   const inputPass = window.document.getElementById("password-input");
-  //const validPass = inputPass.validity;
   const inputPassRp = window.document.getElementById("password-input-rp");
-  //const validPassRp = inputPassRp.validity;
+  
   console.log(document.getElementById("password-input").value.length);
   if (document.getElementById("password-input").value != document.getElementById("password-input-rp").value) {
     inputPassRp.setCustomValidity('Password does not match!!!');
@@ -63,7 +62,7 @@ validateEmail = function(process) {
 /* Validation of input. There should be no blanks */
 validateInputLength = function() {
   const inputSignup = window.document.getElementById("signup-button");
-  //const validSignUp = inputSignup.validity;
+
   if (document.getElementById("password-input").value.length == 0 || document.getElementById("firstname-input").value == 0 || document.getElementById("familyname-input").value.length == 0 || document.getElementById("gender-drop").value.length == 0 || document.getElementById("city-input").value.length == 0 || document.getElementById("country-input").value.length == 0){
     inputSignup.setCustomValidity('Every field should be filled!!!');
     inputSignup.reportValidity();
@@ -108,3 +107,18 @@ signIn = function() {
   }
 }
  
+showPanel = function(panelName){
+  if(panelName == 'homePanel') {
+    document.getElementById("home-panel").style.display = "block";
+    document.getElementById("browse-panel").style.display = "none";
+    document.getElementById("account-panel").style.display = "none";
+  } else if (panelName == 'browsePanel') {
+    document.getElementById("home-panel").style.display = "none";
+    document.getElementById("browse-panel").style.display = "block";
+    document.getElementById("account-panel").style.display = "none";
+  } else if (panelName == 'accountPanel') {
+    document.getElementById("home-panel").style.display = "none";
+    document.getElementById("browse-panel").style.display = "none";
+    document.getElementById("account-panel").style.display = "block";
+  }
+}
