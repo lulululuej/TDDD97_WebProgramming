@@ -1,4 +1,5 @@
 @import url(https://fonts.google.com/specimen/Anton);
+@import url(https://fonts.google.com/specimen/Bebas+Neue);
 
 div {
     display: flex;
@@ -156,7 +157,14 @@ input {
     background-color: beige;
     border-color: aliceblue;
 }
+
 #change-password-container {
+    flex-direction: column;
     clear: left;
     width: 100%;
+}
+
+#change-password-text {
+    font-family: 'Bebas Neue';
+    color:rgb(41, 47, 60);
 }

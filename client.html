@@ -4,6 +4,7 @@
     <head>
         <link href="client.css" type="text/css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Anton" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Bebas+Neue" rel="stylesheet">
         <script src="client.js" type="text/javascript"></script>
         <script src="serverstub.js" type="text/javascript"></script>
         <script id="welcomeview" type="text/view">
@@ -84,8 +85,8 @@
                 <div id="panel-div">
                     <div id="home-panel" class="panel"><p>You are home</p></div>
                     <div id="browse-panel" class="panel"><p>You are browsing</p></div>
-                    <div id="account-panel" class="panel"><p>Here is your account</p>
-                        <button id="signout-button" onclick="signOut()">SignOut</button> 
+                    <div id="account-panel" class="panel">
+                        <h1 id="change-password-text">Change your password</h1>
                         <div  id="change-password-container">
                             <label for="password">Original Password</label>
                             <input type="text" name="old-password" id="old-password-input" required></input>
@@ -95,6 +96,7 @@
                             <input type="text" name="rp-new-password" id="rp-new-password-input" required></input> 
                             <button id="change-password-check" onclick="changeActPassword()">OK</button>
                         </div>
+                        <button id="signout-button" onclick="signOut()">SignOut</button> 
                     </div>
                 </div>
             </div>
