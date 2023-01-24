@@ -84,7 +84,18 @@
                 <div id="panel-div">
                     <div id="home-panel" class="panel"><p>You are home</p></div>
                     <div id="browse-panel" class="panel"><p>You are browsing</p></div>
-                    <div id="account-panel" class="panel"><p>Here is your account</p></div>
+                    <div id="account-panel" class="panel"><p>Here is your account</p>
+                        <button id="signout-button" onclick="signOut()">SignOut</button> 
+                        <div  id="change-password-container">
+                            <label for="password">Original Password</label>
+                            <input type="text" name="old-password" id="old-password-input" required></input>
+                            <label for="new-password">New Password</label>
+                            <input type="text" name="new-password" id="new-password-input" required></input>
+                            <label for="rp-new-password">Reapeat New Password</label>
+                            <input type="text" name="rp-new-password" id="rp-new-password-input" required></input> 
+                            <button id="change-password-check" onclick="changeActPassword()">OK</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </script>

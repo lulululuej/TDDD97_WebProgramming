@@ -106,8 +106,15 @@ signIn = function() {
     return;
   }
 }
+
+signOut = function() {
+  let token = localStorage.getItem("token");
+  serverstub.signOut(token);
+  localStorage.removeItem('token');
+  window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
+}
  
-showPanel = function(panelName){
+showPanel = function(panelName) {
   if(panelName == 'homePanel') {
     document.getElementById("home-panel").style.display = "block";
     document.getElementById("browse-panel").style.display = "none";
@@ -120,5 +127,34 @@ showPanel = function(panelName){
     document.getElementById("home-panel").style.display = "none";
     document.getElementById("browse-panel").style.display = "none";
     document.getElementById("account-panel").style.display = "block";
+  }
+}
+
+validateOldPassword = function() {
+
+}
+
+changeActPassword = function() {
+  let token = localStorage.getItem("token");
+  let oldPassword = document.getElementById("old-password-input").value;
+  let newPassword = document.getElementById("new-password-input").value;
+  let rpNewPassword = document.getElementById("rp-new-password-input").value;
+  let res = serverstub.changePassword(token, oldPassword, newPassword);
+  let changeCheckPass = document.getElementById("change-password-check");
+  console.log(res);
+
+  if(!res['success']) {
+    changeCheckPass.setCustomValidity(res['message']);
+    changeCheckPass.reportValidity();
+    return false;
+  }
+  if(newPassword != rpNewPassword) {
+    changeCheckPass.setCustomValidity('New Password does not match!!!');
+    changeCheckPass.reportValidity();
+    return false;
+  } else if(res['success']){
+    changeCheckPass.setCustomValidity(res['message']);
+    changeCheckPass.reportValidity();
+    return true;
   }
 }

@@ -113,7 +113,6 @@ input {
     border: 0;
     cursor: pointer;
     transition: 0.2s;
-
 }
 
 .tab-button:hover {
@@ -149,5 +148,15 @@ input {
 }
 
 #panel-div {
+    width: 100%;
+}
+
+/* Account Tab */
+#signout-button {
+    background-color: beige;
+    border-color: aliceblue;
+}
+#change-password-container {
+    clear: left;
     width: 100%;
 }
