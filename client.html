@@ -4,7 +4,8 @@
     <head>
         <link href="client.css" type="text/css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Anton" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Righteous" />
+        <link href="https://fonts.googleapis.com/css?family=Bebas+Neue" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow" rel="stylesheet">
         <script src="client.js" type="text/javascript"></script>
         <script src="serverstub.js" type="text/javascript"></script>
         <script id="welcomeview" type="text/view">
@@ -83,25 +84,41 @@
                     <button class="tab-button" id="account-tab" onclick="showPanel('accountPanel')">Account</button>
                 </div>
                 <div id="panel-div">
-                    <div id="home-panel" class="panel"><p>You are home</p></div>
-                    <div id="browse-panel" class="panel"><p>You are browsing</p></div>
-                    <div id="account-panel" class="panel"><p>Here is your account</p>
-                        <button id="signout-button" onclick="signOut()">SignOut</button> 
-                        <div  id="change-password-container">
-                            <label id="old-password" for="password">Original Password</label>
-                            <input type="text" name="old-password" id="old-password-input" required></input>
-                            <label id="new-password" for="new-password">New Password</label>
-                            <input type="text" name="new-password" id="new-password-input" required></input>
-                            <label id="rp-new-password" for="rp-new-password">Reapeat New Password</label>
-                            <input type="text" name="rp-new-password" id="rp-new-password-input" required></input> 
-                            <button id="change-password-check" onclick="changeActPassword()">OK</button>
+                    <div id="home-panel" class="panel">
+                        <div id="user-information">
+                            <h1>Your Information</h1>
+                            <ul class="list-group">
+                                <li id="firstname-" class="list-group-item">First Name<p id="firstname-text"></p></li>
+                                <li class="list-group-item">Family Name<p id="familyname-text"></p></li>
+                                <li class="list-group-item">Email<p id="email-text"></p></li>
+                                <li class="list-group-item">Gender<p id="gender-text"></p></li>
+                                <li class="list-group-item">City<p id="city-text"></p></li>
+                                <li class="list-group-item">Country<p id="country-text"></p></li>
+                            </ul>
+
                         </div>
+                        <div id="user-message"></div>
+                    </div>
+                    <div id="browse-panel" class="panel"><p>You are browsing</p></div>
+                    <div id="account-panel" class="panel">
+                        <h1 id="change-password-text">Change your password</h1>
+                        <div  id="change-password-container">
+                            <label class="change-password" id="old-password" for="password">Original Password</label>
+                            <input class="change-password-input" type="text" name="old-password" id="old-password-input" required></input>
+                            <label class="change-password" id="new-password" for="new-password">New Password</label>
+                            <input class="change-password-input" type="text" name="new-password" id="new-password-input" required></input>
+                            <label class="change-password" id="rp-new-password" for="rp-new-password">Repeat New Password</label>
+                            <input class="change-password-input" type="text" name="rp-new-password" id="rp-new-password-input" required></input> 
+                            <button class="change-password" id="change-password-check" onclick="changeActPassword()">OK</button>
+                        </div>
+                        <button id="signout-button" onclick="signOut()">SignOut</button> 
                     </div>
                 </div>
             </div>
         </script>
     </head>
     <body>
+        <div id="bg"></div>
         <div id="container">
 
         </div>

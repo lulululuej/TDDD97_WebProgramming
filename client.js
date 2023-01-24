@@ -2,6 +2,7 @@
 displayView = function(view) {
   if (view == "profile") {
     document.getElementById("container").innerHTML = document.getElementById("profileview").innerHTML;
+    populateInformation();
   }
 };
 
@@ -10,9 +11,8 @@ window.onload = function() {
   let token = localStorage.getItem("token");
 
   if (token) {
-   // serverstub.signOut(token);
-    //window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
+    populateInformation();
   } else {
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
   }
@@ -119,6 +119,7 @@ showPanel = function(panelName) {
     document.getElementById("home-panel").style.display = "block";
     document.getElementById("browse-panel").style.display = "none";
     document.getElementById("account-panel").style.display = "none";
+    populateInformation();
   } else if (panelName == 'browsePanel') {
     document.getElementById("home-panel").style.display = "none";
     document.getElementById("browse-panel").style.display = "block";
@@ -130,8 +131,15 @@ showPanel = function(panelName) {
   }
 }
 
-validateOldPassword = function() {
-
+populateInformation = function() {
+  let token = localStorage.getItem("token");
+  let data = serverstub.getUserDataByToken(token);
+  document.getElementById("firstname-text").innerText = data['data'].firstname;
+  document.getElementById("familyname-text").innerText = data['data'].familyname;
+  document.getElementById("email-text").innerText = data['data'].email;
+  document.getElementById("gender-text").innerText = data['data'].gender;
+  document.getElementById("city-text").innerText = data['data'].city;
+  document.getElementById("country-text").innerText = data['data'].country;
 }
 
 changeActPassword = function() {
@@ -139,20 +147,25 @@ changeActPassword = function() {
   let oldPassword = document.getElementById("old-password-input").value;
   let newPassword = document.getElementById("new-password-input").value;
   let rpNewPassword = document.getElementById("rp-new-password-input").value;
-  let res = serverstub.changePassword(token, oldPassword, newPassword);
   let changeCheckPass = document.getElementById("change-password-check");
-  console.log(res);
+
+  if(newPassword != rpNewPassword) {
+    changeCheckPass.setCustomValidity('New Password does not match!!!');
+    changeCheckPass.reportValidity();
+    return false;
+  } else if (document.getElementById("new-password-input").value.length < 8) {
+    changeCheckPass.setCustomValidity('Password too short!!!');
+    changeCheckPass.reportValidity();
+    return false;
+  } 
+
+  let res = serverstub.changePassword(token, oldPassword, newPassword);
 
   if(!res['success']) {
     changeCheckPass.setCustomValidity(res['message']);
     changeCheckPass.reportValidity();
     return false;
-  }
-  if(newPassword != rpNewPassword) {
-    changeCheckPass.setCustomValidity('New Password does not match!!!');
-    changeCheckPass.reportValidity();
-    return false;
-  } else if(res['success']){
+  }else if(res['success']){
     changeCheckPass.setCustomValidity(res['message']);
     changeCheckPass.reportValidity();
     return true;
