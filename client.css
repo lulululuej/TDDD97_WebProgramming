@@ -160,3 +160,6 @@ input {
     clear: left;
     width: 100%;
 }
+#old-password {
+    font-family: 'Righteous';
+}
