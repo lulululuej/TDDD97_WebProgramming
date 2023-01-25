@@ -133,9 +133,8 @@ input {
 .panel {
     display: none;
 }
-
 #home-panel {
-    display: block;
+    display: inline-flex;
     width: 100%;
 }
 
@@ -183,6 +182,8 @@ input {
     background-color: rgb(218, 242, 254);
     border-color: rgb(255, 255, 255);
 }
+
+/* Home */
 #user-information {
     flex-direction: column;
     width: 30%;
@@ -232,8 +233,35 @@ li {
 h1 {
     font-family: 'Bebas Neue';
     color:rgb(41, 47, 60);
+    align-self: center; 
 }
-
-
-
-
+#user-message {
+    flex-direction: column;
+    width: 70%;
+}
+#user-post-container {
+    flex-direction: column;
+    width: 100%; 
+}
+#user-text-box {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 60%;
+    height: 100px;
+}
+.user-message-input {
+    align-self: center;
+    margin-bottom: 20px;
+}
+#user-post-btn {
+    width: 100px;
+    height: 30px;
+    margin-top: 10px;
+}
+#user-wall-container {
+    overflow-y: auto;
+    flex-direction: column;
+    width: 60%;
+    align-self: center; 
+    margin-top: 10px;
+}

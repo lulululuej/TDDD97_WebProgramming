@@ -116,7 +116,7 @@ signOut = function() {
  
 showPanel = function(panelName) {
   if(panelName == 'homePanel') {
-    document.getElementById("home-panel").style.display = "block";
+    document.getElementById("home-panel").style.display = "inline-flex";
     document.getElementById("browse-panel").style.display = "none";
     document.getElementById("account-panel").style.display = "none";
     populateInformation();
@@ -169,5 +169,37 @@ changeActPassword = function() {
     changeCheckPass.setCustomValidity(res['message']);
     changeCheckPass.reportValidity();
     return true;
+  }
+}
+
+updateWall = function() {
+  let token = localStorage.getItem("token");
+  let data = serverstub.getUserMessagesByToken(token)['data'];
+  let messageList = document.getElementById("user-wall-container");
+  messageList.innerHTML = '';
+  let i =0;
+  for(const obj of data) {
+    let msg = obj.content;
+    messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+msg+'</p></div>';
+    let id = "wall-msg-container"+i;
+    //document.getElementById('wall-msg-container'+i).setAttribute('style','height: fit-content(6em)');
+    document.getElementById(id).style.height = 'fit-content(6em)';
+    document.getElementById(id).style.border = '1px solid black';
+    document.getElementById(id).style.marginBottom = '10px';
+    document.getElementById(id).style.backgroundColor = 'white';
+    document.getElementById(id).style.borderRadius = '5px';
+    document.getElementById(id).style.padding = "10px 10px 10px 10px";
+    i++;
+  }
+}
+
+postMessage = function() {
+  let token = localStorage.getItem("token");
+  let msg = document.getElementById('user-text-box').value;
+  console.log(msg);
+  let email = serverstub.getUserDataByToken(token)['data'].email;
+  let data = serverstub.postMessage(token, msg, email);
+  if(data.success) {
+    document.getElementById('user-text-box').value = "You posted a message!";
   }
 }

@@ -95,9 +95,19 @@
                                 <li class="list-group-item">City<p id="city-text"></p></li>
                                 <li class="list-group-item">Country<p id="country-text"></p></li>
                             </ul>
-
+                            <button id="update-btn" onclick="updateWall()">Update Wall</button> 
                         </div>
-                        <div id="user-message"></div>
+                        <div id="user-message">
+                            <div id="user-post-container">
+                                <h1>Post message to your wall!!</h1> 
+                                <textarea class="user-message-input" id="user-text-box" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
+                                <button class="user-message-input" id="user-post-btn" onclick="postMessage()">Post</button>   
+                            </div> 
+                            <div id="user-wall-container">
+                                
+                            </div>
+              
+                        </div>
                     </div>
                     <div id="browse-panel" class="panel"><p>You are browsing</p></div>
                     <div id="account-panel" class="panel">
