@@ -46,6 +46,7 @@ div {
 
 body {
     background-color: #6998CE;
+    margin: 0;
 }
 
 form {
@@ -220,14 +221,22 @@ li {
     margin-top: 0px;
 }
 #bg {
+
+}
+#container {
+    position: relative;
+}
+#container::before {
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
-    bottom: 0;
-    right: 0;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
     z-index: -1;
     background-image: url('paper.png');
-    background-size: cover;
+    background-repeat: repeat;
     filter: contrast(1.5) opacity(0.2);
 }
 h1 {
@@ -264,4 +273,11 @@ h1 {
     width: 60%;
     align-self: center; 
     margin-top: 10px;
+}
+
+#update-btn {
+    width: fit-content;
+    padding: 13px;
+    margin: 10px;
+    align-self: flex-end;
 }
