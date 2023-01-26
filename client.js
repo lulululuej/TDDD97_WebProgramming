@@ -3,6 +3,7 @@ displayView = function(view) {
   if (view == "profile") {
     document.getElementById("container").innerHTML = document.getElementById("profileview").innerHTML;
     populateInformation();
+    updateWall();
   }
 };
 
@@ -197,11 +198,13 @@ updateWall = function() {
 
 updateUserWall = function() {
   let token = localStorage.getItem("token");
-  let email = document.getElementById("search-user-input").value;
+  let email = document.getElementById("friend-email-text").value;
   let data = serverstub.getUserMessagesByEmail(token, email)['data'];
   let messageList = document.getElementById("user-wall-container");
   messageList.innerHTML = '';
-  let i =0;
+  let i = 0;
+  console.log(email);
+  //if (!data)
   for(const obj of data) {
     let msg = obj.content;
     messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+msg+'</p></div>';
@@ -233,15 +236,27 @@ getUserInformation = function() {
   let email = document.getElementById("search-user-input").value;
   console.log("email: " + email);
   let userData = serverstub.getUserDataByEmail(token, email);
+  console.log("userdata: "+userData['data']);
+  document.getElementById("user-container").style.display = "block";
+  document.getElementById("friend-firstname-text").innerText = userData['data'].firstname;
+  document.getElementById("friend-familyname-text").innerText = userData['data'].familyname;
+  document.getElementById("friend-email-text").innerText = userData['data'].email;
+  document.getElementById("friend-gender-text").innerText = userData['data'].gender;
+  document.getElementById("friend-city-text").innerText = userData['data'].city;
+  document.getElementById("friend-country-text").innerText = userData['data'].country;
   
-  document.getElementById("firstname-text").innerText = userData['data'].firstname;
-  document.getElementById("familyname-text").innerText = userData['data'].familyname;
-  document.getElementById("email-text").innerText = userData['data'].email;
-  document.getElementById("gender-text").innerText = userData['data'].gender;
-  document.getElementById("city-text").innerText = userData['data'].city;
-  document.getElementById("country-text").innerText = userData['data'].country;
-
+  //document.getElementById("user-container").style.display = "block";
   updateUserWall();
+}
 
-  document.getElementById("user-container").innerHTML = document.getElementById("home-panel").innerHTML;
+sendMessage = function() {
+  let token = localStorage.getItem("token");
+  let msg = document.getElementById('friend-text-box').value;
+  console.log(msg);
+  let email = document.getElementById("friend-email-text").value;
+  console.log(email);
+  let data = serverstub.postMessage(token, msg, email);
+  if(data.success) {
+    document.getElementById('user-text-box').value = "You posted a message!";
+  }
 }

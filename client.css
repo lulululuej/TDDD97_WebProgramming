@@ -258,11 +258,22 @@ h1 {
     width: 60%;
     height: 100px;
 }
+#friend-text-box {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 60%;
+    height: 100px;
+}
 .user-message-input {
     align-self: center;
     margin-bottom: 20px;
 }
 #user-post-btn {
+    width: 100px;
+    height: 30px;
+    margin-top: 10px;
+}
+#friend-post-btn {
     width: 100px;
     height: 30px;
     margin-top: 10px;
@@ -276,6 +287,13 @@ h1 {
 }
 
 #update-btn {
+    width: fit-content;
+    padding: 13px;
+    margin: 10px;
+    align-self: flex-end;
+}
+
+#update-user-btn {
     width: fit-content;
     padding: 13px;
     margin: 10px;
@@ -304,4 +322,7 @@ h1 {
     padding: 13px;
     align-self: center;
     margin: 10px;
+}
+#user-container {
+    display: none;
 }
