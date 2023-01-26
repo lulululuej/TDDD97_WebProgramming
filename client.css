@@ -281,3 +281,27 @@ h1 {
     margin: 10px;
     align-self: flex-end;
 }
+
+#browse-panel {
+    width: 100%;
+}
+
+#search-user-container {
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+}
+
+#search-user-input {
+    width: 20%;
+    align-self: center;
+    padding: 10px;
+}
+
+#search-user-button {
+    height: fit-content;
+    width: fit-content;
+    padding: 13px;
+    align-self: center;
+    margin: 10px;
+}

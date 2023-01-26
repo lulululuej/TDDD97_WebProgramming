@@ -13,6 +13,7 @@ window.onload = function() {
   if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     populateInformation();
+    updateWall();
   } else {
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
   }
@@ -119,6 +120,7 @@ showPanel = function(panelName) {
     document.getElementById("home-panel").style.display = "inline-flex";
     document.getElementById("browse-panel").style.display = "none";
     document.getElementById("account-panel").style.display = "none";
+    updateWall();
     populateInformation();
   } else if (panelName == 'browsePanel') {
     document.getElementById("home-panel").style.display = "none";
@@ -182,7 +184,29 @@ updateWall = function() {
     let msg = obj.content;
     messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+msg+'</p></div>';
     let id = "wall-msg-container"+i;
-    //document.getElementById('wall-msg-container'+i).setAttribute('style','height: fit-content(6em)');
+ 
+    document.getElementById(id).style.height = 'fit-content(6em)';
+    document.getElementById(id).style.border = '1px solid black';
+    document.getElementById(id).style.marginBottom = '10px';
+    document.getElementById(id).style.backgroundColor = 'white';
+    document.getElementById(id).style.borderRadius = '5px';
+    document.getElementById(id).style.padding = "10px 10px 10px 10px";
+    i++;
+  }
+}
+
+updateUserWall = function() {
+  let token = localStorage.getItem("token");
+  let email = document.getElementById("search-user-input").value;
+  let data = serverstub.getUserMessagesByEmail(token, email)['data'];
+  let messageList = document.getElementById("user-wall-container");
+  messageList.innerHTML = '';
+  let i =0;
+  for(const obj of data) {
+    let msg = obj.content;
+    messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+msg+'</p></div>';
+    let id = "wall-msg-container"+i;
+ 
     document.getElementById(id).style.height = 'fit-content(6em)';
     document.getElementById(id).style.border = '1px solid black';
     document.getElementById(id).style.marginBottom = '10px';
@@ -202,4 +226,22 @@ postMessage = function() {
   if(data.success) {
     document.getElementById('user-text-box').value = "You posted a message!";
   }
+}
+
+getUserInformation = function() {
+  const token = localStorage.getItem("token");
+  let email = document.getElementById("search-user-input").value;
+  console.log("email: " + email);
+  let userData = serverstub.getUserDataByEmail(token, email);
+  
+  document.getElementById("firstname-text").innerText = userData['data'].firstname;
+  document.getElementById("familyname-text").innerText = userData['data'].familyname;
+  document.getElementById("email-text").innerText = userData['data'].email;
+  document.getElementById("gender-text").innerText = userData['data'].gender;
+  document.getElementById("city-text").innerText = userData['data'].city;
+  document.getElementById("country-text").innerText = userData['data'].country;
+
+  updateUserWall();
+
+  document.getElementById("user-container").innerHTML = document.getElementById("home-panel").innerHTML;
 }
