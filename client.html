@@ -97,13 +97,13 @@
                             </ul>
                             <button id="update-btn" onclick="updateWall()">Update Wall</button> 
                         </div>
-                        <div id="user-message">
+                        <div class="message" id="user-message">
                             <div id="user-post-container">
                                 <h1>Post a message to your wall</h1> 
                                 <textarea class="user-message-input" id="user-text-box" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
                                 <button class="user-message-input" id="user-post-btn" onclick="postMessage()">Post</button>   
                             </div> 
-                            <div id="user-wall-container">
+                            <div class="user-wall" id="user-wall-container">
                                 
                             </div>
               
@@ -117,23 +117,25 @@
                             <button onclick="getUserInformation()" id="search-user-button">Search</button>
                         </div>
                         <div id="user-container">
-                            <h1>User Information</h1>
-                            <ul class="list-group">
-                                <li class="list-group-item">First Name<p id="friend-firstname-text"></p></li>
-                                <li class="list-group-item">Family Name<p id="friend-familyname-text"></p></li>
-                                <li class="list-group-item">Email<p id="friend-email-text"></p></li>
-                                <li class="list-group-item">Gender<p id="friend-gender-text"></p></li>
-                                <li class="list-group-item">City<p id="friend-city-text"></p></li>
-                                <li class="list-group-item">Country<p id="friend-country-text"></p></li>
-                            </ul>
-                            <button id="update-user-btn" onclick="updateUserWall()">Update Wall</button>
-                            <div id="user-message">
+                            <div id="friend-information">
+                                <h1>User Information</h1>
+                                <ul class="list-group">
+                                    <li class="list-group-item">First Name<p id="friend-firstname-text"></p></li>
+                                    <li class="list-group-item">Family Name<p id="friend-familyname-text"></p></li>
+                                    <li class="list-group-item">Email<p id="friend-email-text"></p></li>
+                                    <li class="list-group-item">Gender<p id="friend-gender-text"></p></li>
+                                    <li class="list-group-item">City<p id="friend-city-text"></p></li>
+                                    <li class="list-group-item">Country<p id="friend-country-text"></p></li>
+                                </ul>
+                            <button id="update-user-btn" onclick="updateUserWall()">Update Wall</button>    
+                            </div>
+                            <div class="message" id="user-message">
                                 <div id="user-post-container">
                                     <h1>Post a message to your friend</h1> 
                                     <textarea class="user-message-input" id="friend-text-box" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
                                     <button class="user-message-input" id="friend-post-btn" onclick="sendMessage()">Send</button>   
                                 </div> 
-                                <div id="user-wall-container">
+                                <div class="user-wall" id="friend-wall-container">
                                     
                                 </div>
                             </div>

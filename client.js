@@ -196,30 +196,6 @@ updateWall = function() {
   }
 }
 
-updateUserWall = function() {
-  let token = localStorage.getItem("token");
-  let email = document.getElementById("friend-email-text").value;
-  let data = serverstub.getUserMessagesByEmail(token, email)['data'];
-  let messageList = document.getElementById("user-wall-container");
-  messageList.innerHTML = '';
-  let i = 0;
-  console.log(email);
-  //if (!data)
-  for(const obj of data) {
-    let msg = obj.content;
-    messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+msg+'</p></div>';
-    let id = "wall-msg-container"+i;
- 
-    document.getElementById(id).style.height = 'fit-content(6em)';
-    document.getElementById(id).style.border = '1px solid black';
-    document.getElementById(id).style.marginBottom = '10px';
-    document.getElementById(id).style.backgroundColor = 'white';
-    document.getElementById(id).style.borderRadius = '5px';
-    document.getElementById(id).style.padding = "10px 10px 10px 10px";
-    i++;
-  }
-}
-
 postMessage = function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('user-text-box').value;
@@ -234,29 +210,47 @@ postMessage = function() {
 getUserInformation = function() {
   const token = localStorage.getItem("token");
   let email = document.getElementById("search-user-input").value;
-  console.log("email: " + email);
   let userData = serverstub.getUserDataByEmail(token, email);
-  console.log("userdata: "+userData['data']);
-  document.getElementById("user-container").style.display = "block";
+  document.getElementById("user-container").style.display = "inline-flex";
   document.getElementById("friend-firstname-text").innerText = userData['data'].firstname;
   document.getElementById("friend-familyname-text").innerText = userData['data'].familyname;
   document.getElementById("friend-email-text").innerText = userData['data'].email;
   document.getElementById("friend-gender-text").innerText = userData['data'].gender;
   document.getElementById("friend-city-text").innerText = userData['data'].city;
   document.getElementById("friend-country-text").innerText = userData['data'].country;
-  
-  //document.getElementById("user-container").style.display = "block";
+
   updateUserWall();
+}
+
+updateUserWall = function() {
+  let token = localStorage.getItem("token");
+  let email = document.getElementById("friend-email-text").innerText;
+  let data = serverstub.getUserMessagesByEmail(token, email)['data'];
+  let messageList = document.getElementById("friend-wall-container");
+  messageList.innerHTML = '';
+  let i = 0;
+  //if (!data)
+  for(const obj of data) {
+    let msg = obj.content;
+    messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+msg+'</p></div>';
+    let id = "friend-wall-msg-container"+i;
+ 
+    document.getElementById(id).style.height = 'fit-content(6em)';
+    document.getElementById(id).style.border = '1px solid black';
+    document.getElementById(id).style.marginBottom = '10px';
+    document.getElementById(id).style.backgroundColor = 'white';
+    document.getElementById(id).style.borderRadius = '5px';
+    document.getElementById(id).style.padding = "10px 10px 10px 10px";
+    i++;
+  }
 }
 
 sendMessage = function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('friend-text-box').value;
-  console.log(msg);
-  let email = document.getElementById("friend-email-text").value;
-  console.log(email);
+  let email = document.getElementById("friend-email-text").innerText;
   let data = serverstub.postMessage(token, msg, email);
   if(data.success) {
-    document.getElementById('user-text-box').value = "You posted a message!";
+    document.getElementById('friend-text-box').value = "You sent a message!";
   }
 }

@@ -211,12 +211,10 @@ li {
     border: 4px solid #ffda76;
     transition: 0.2s;
 }
-
 .list-group:hover {
     transform: translate(-12px, -12px);
     box-shadow: 24px 24px 5px black;
 }
-
 #firstname-text {
     margin-top: 0px;
 }
@@ -244,7 +242,7 @@ h1 {
     color:rgb(41, 47, 60);
     align-self: center; 
 }
-#user-message {
+.message {
     flex-direction: column;
     width: 70%;
 }
@@ -253,12 +251,6 @@ h1 {
     width: 100%; 
 }
 #user-text-box {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    width: 60%;
-    height: 100px;
-}
-#friend-text-box {
     margin-top: 10px;
     margin-bottom: 10px;
     width: 60%;
@@ -273,19 +265,13 @@ h1 {
     height: 30px;
     margin-top: 10px;
 }
-#friend-post-btn {
-    width: 100px;
-    height: 30px;
-    margin-top: 10px;
-}
-#user-wall-container {
+.user-wall {
     overflow-y: auto;
     flex-direction: column;
     width: 60%;
     align-self: center; 
     margin-top: 10px;
 }
-
 #update-btn {
     width: fit-content;
     padding: 13px;
@@ -299,23 +285,20 @@ h1 {
     margin: 10px;
     align-self: flex-end;
 }
-
+/*Browse*/
 #browse-panel {
     width: 100%;
 }
-
 #search-user-container {
     flex-direction: column;
     width: 100%;
     justify-content: center;
 }
-
 #search-user-input {
     width: 20%;
     align-self: center;
     padding: 10px;
 }
-
 #search-user-button {
     height: fit-content;
     width: fit-content;
@@ -325,4 +308,22 @@ h1 {
 }
 #user-container {
     display: none;
+    flex-direction: row;
+    width: 100%;
+}
+#friend-information {
+    flex-direction: column;
+    width: 30%;
+    margin-left: 10px;
+}
+#friend-text-box {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 60%;
+    height: 100px;
+}
+#friend-post-btn {
+    width: 100px;
+    height: 30px;
+    margin-top: 10px;
 }
