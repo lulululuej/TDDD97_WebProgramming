@@ -205,6 +205,7 @@ postMessage = function() {
   if(data.success) {
     document.getElementById('user-text-box').value = "You posted a message!";
   }
+  updateWall();
 }
 
 getUserInformation = function() {
@@ -229,7 +230,6 @@ updateUserWall = function() {
   let messageList = document.getElementById("friend-wall-container");
   messageList.innerHTML = '';
   let i = 0;
-  //if (!data)
   for(const obj of data) {
     let msg = obj.content;
     messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+msg+'</p></div>';
@@ -253,4 +253,5 @@ sendMessage = function() {
   if(data.success) {
     document.getElementById('friend-text-box').value = "You sent a message!";
   }
+  updateUserWall();
 }
