@@ -13,6 +13,7 @@ window.onload = function() {
 
   if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
+    showPanel(localStorage.getItem('lastPanel'));
     populateInformation();
     updateWall();
   } else {
@@ -117,6 +118,7 @@ signOut = function() {
 }
  
 showPanel = function(panelName) {
+  localStorage.setItem('lastPanel', panelName);
   if(panelName == 'homePanel') {
     document.getElementById("home-panel").style.display = "inline-flex";
     document.getElementById("browse-panel").style.display = "none";
@@ -183,7 +185,8 @@ updateWall = function() {
   let i =0;
   for(const obj of data) {
     let msg = obj.content;
-    messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+msg+'</p></div>';
+    let sender = obj.writer;
+    messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
     let id = "wall-msg-container"+i;
  
     document.getElementById(id).style.height = 'fit-content(6em)';
@@ -199,7 +202,11 @@ updateWall = function() {
 postMessage = function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('user-text-box').value;
-  console.log(msg);
+  //console.log(msg);
+  if(msg.length == 0) {
+    document.getElementById('user-text-box').value = "No empty message!!!";
+    return;
+  }
   let email = serverstub.getUserDataByToken(token)['data'].email;
   let data = serverstub.postMessage(token, msg, email);
   if(data.success) {
@@ -232,7 +239,9 @@ updateUserWall = function() {
   let i = 0;
   for(const obj of data) {
     let msg = obj.content;
-    messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+msg+'</p></div>';
+    console.log(obj);
+    let sender = obj.writer;
+    messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
     let id = "friend-wall-msg-container"+i;
  
     document.getElementById(id).style.height = 'fit-content(6em)';
