@@ -78,8 +78,8 @@ signUp = function() {;
   if (validatePassword() && validateEmail("Sign Up") && validateInputLength()) {
     
     const data = {email:document.getElementById("email-input").value, password:document.getElementById("password-input").value, firstname:document.getElementById("firstname-input").value, familyname:document.getElementById("familyname-input").value, gender:document.getElementById("gender-drop").value, city:document.getElementById("city-input").value, country:document.getElementById("country-input").value};
-
-    if (serverstub.signUp(data).success) {
+    console.log(data);
+    /*if (serverstub.signUp(data).success) {
       let token = serverstub.signIn(document.getElementById("email-input").value, document.getElementById("password-input").value).data;
       localStorage.setItem("token", token);
       console.log("token: ", localStorage.getItem("token"));
@@ -88,7 +88,7 @@ signUp = function() {;
       const inputEmail = window.document.getElementById("email-input");
       inputEmail.setCustomValidity(serverstub.signUp(data).message);
       inputEmail.reportValidity();
-    }
+    }*/
   }
 }
 
