@@ -6,6 +6,7 @@ create table user(
     gender varchar(20), 
     city varchar(20), 
     country varchar(20), 
+    token varchar(30),
     primary key(email));
 
 create table message(
