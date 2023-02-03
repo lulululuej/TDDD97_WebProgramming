@@ -51,31 +51,42 @@ def sign_out():
     if res['success']:
         return res, 204
     else:
-        return res, 406
+        return res, 401
 
 @app.route("/change_password/")
 def change_password():
     data = request.get_json()
     res = database_helper.change_password(data['token'], data['oldpw'], data['newpw'])
     if res['success']:
-        return res, 204
+        return res, 201
     else:
-        return res, 403
+        return res, 401
 
-@app.route("/get_user_data_by_token/")
+@app.route("/get_user_data_by_token/", methods = ['GET'])
 def get_user_data_by_token():
+    data = request.get_json()
+    res = database_helper.get_user_data_by_token(data['token'])
 
-    return 
+    if res["success"]:
+        return res, 200
+    else:
+        return res, 401
 
 @app.route("/get_user_data_by_email/")
 def get_user_data_by_email():
+    data = request.get_json()
+    res = database_helper.get_user_data_by_email(data['token'], data['email'])
 
-    return 
+    if res["success"]:
+        return res, 200
+    else:
+        return res, 401
+
 
 @app.route("/get_user_messages_by_token/")
 def get_user_messages_by_token():
+    return
 
-    return 
 
 @app.route("/get_user_messages_by_email/")
 def get_user_messages_by_email():
