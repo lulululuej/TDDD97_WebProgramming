@@ -94,7 +94,7 @@ def get_user_data_by_token(token):
     cursor = db.execute("select email from user where token = (?);", [token])
     email = cursor.fetchone()[0]      
     if not email:
-        return {"success": False, "message": "You are not logged in."}
+        return {"success": False, "message": "You are not signed in."}
     else:
         return get_user_data_by_email(token, email)
 
@@ -104,14 +104,15 @@ def get_user_data_by_email(token, email):
     cursor = db.execute("select token from user where token = (?);", [token])
     token = cursor.fetchall()      
     if not token:
-        return {"success": False, "message": "You are not logged in."}
+        return {"success": False, "message": "You are not signed in."}
     else:
         cursor = db.execute("select * from user where email = (?);", [email])
         match = cursor.fetchall()
         if not match:
-            return {"success": False, "message": "There is no such user."}
+            return {"success": False, "message": "No such user."}
+            
         result = {'email': match[0][0], 'password': match[0][1], 'firstname': match[0][2], 'familyname': match[0][3], 'gender': match[0][4], 'city': match[0][5], 'country': match[0][6]}
-        return {'success': True, 'message': result}
+        return {'success': True, "message": "User data retrieved.", "data": result}
 
 def disconnect():
     db = getattr(g, 'db', None)
