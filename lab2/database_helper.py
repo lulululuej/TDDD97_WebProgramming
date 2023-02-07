@@ -1,6 +1,6 @@
 import sqlite3
 from sqlite3 import Error
-from flask import g
+from flask import g, jsonify
 import pathlib
 pathlib.Path(__file__).parent.resolve()
 DATABASE_URI = pathlib.Path(__file__).parent.resolve().joinpath("database.db")
@@ -39,6 +39,7 @@ def add_token(email, token):
 
 def delete_token(token):
     db = get_db()
+    print(token)
     if token:
         try:
             # see if this token exist or not
@@ -92,11 +93,11 @@ def get_user_data_by_token(token):
     db = get_db()
     # see if this token exist or not
     cursor = db.execute("select email from user where token = (?);", [token])
-    email = cursor.fetchone()[0]      
+    email = cursor.fetchone()    
     if not email:
         return {"success": False, "message": "You are not signed in."}
     else:
-        return get_user_data_by_email(token, email)
+        return get_user_data_by_email(token, email[0])
 
 def get_user_data_by_email(token, email):
     db = get_db()
@@ -113,6 +114,55 @@ def get_user_data_by_email(token, email):
             
         result = {'email': match[0][0], 'password': match[0][1], 'firstname': match[0][2], 'familyname': match[0][3], 'gender': match[0][4], 'city': match[0][5], 'country': match[0][6]}
         return {'success': True, "message": "User data retrieved.", "data": result}
+
+def post_messsage(token, message, email):
+    db = get_db()
+    # see if this token exist or not
+    cursor = db.execute("select email from user where token = (?);", [token])
+    writer = cursor.fetchone()[0]
+    
+    if not writer:
+        return {"success": False, "message": "You are not signed in."}
+    else:
+        cursor = db.execute("select * from user where email = (?);", [email])
+        match = cursor.fetchall()
+        if not match:
+            return {"success": False, "message": "No such user."}
+        # insert msg
+        print(writer)
+        db.execute("insert into message (writer, email, content) values (?, ?, ?);", (writer, email, message))
+        db.commit()
+        db.close()
+        return {"success": True, "message": "Message posted"}
+
+def get_user_messages_by_email(token, email):
+    db = get_db()
+    # see if this token exist or not
+    cursor = db.execute("select token from user where token = (?);", [token])
+    match = cursor.fetchall()
+    if not match:
+        return {"success": False, "message": "You are not signed in."}
+    else:
+        cursor = db.execute("select email from user where email = (?);", [email])
+        match = cursor.fetchall()
+        if not match:
+            return {"success": False, "message": "No such user."}
+        cursor = db.execute("select writer, content from message where email = (?);", [email])
+        message = []
+        for msg in cursor:
+            message.append({"writer":msg[0], "content": msg[1]})
+        return {"success": True, "message": "User messages retrieved.", "data": message}
+
+def get_user_messages_by_token(token):
+    db = get_db()
+    # see if this token exist or not
+    cursor = db.execute("select email from user where token = (?);", [token])
+    email = cursor.fetchone()
+    if not email:
+        return {"success": False, "message": "You are not signed in."}
+    else:
+        return get_user_messages_by_email(token, email[0])
+
 
 def disconnect():
     db = getattr(g, 'db', None)

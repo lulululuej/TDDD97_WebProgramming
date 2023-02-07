@@ -9,7 +9,7 @@ app = Flask(__name__)
 def root():
     return 'Hello World!', 200
 
-@app.route("/sign_in/", methods = ['GET'])
+@app.route("/sign_in/", methods = ['GET', 'POST'])
 def sign_in():
     param = request.get_json()
     res = database_helper.get_user(param['email'])
@@ -44,10 +44,10 @@ def sign_up():
         return {"success": False, "message": "Form data missing or incorrect type."}, 400
     
 
-@app.route("/sign_out/")
+@app.route("/sign_out/", methods = ['PATCH'])
 def sign_out():
-    data = request.get_json()
-    res = database_helper.delete_token(data['token'])
+    token = request.headers.get('Authorization')
+    res = database_helper.delete_token(token)
     if res['success']:
         return res, 204
     else:
@@ -56,7 +56,8 @@ def sign_out():
 @app.route("/change_password/")
 def change_password():
     data = request.get_json()
-    res = database_helper.change_password(data['token'], data['oldpw'], data['newpw'])
+    token = request.headers.get('Authorization')
+    res = database_helper.change_password(token, data['oldpw'], data['newpw'])
     if res['success']:
         return res, 201
     else:
@@ -64,18 +65,19 @@ def change_password():
 
 @app.route("/get_user_data_by_token/", methods = ['GET'])
 def get_user_data_by_token():
-    data = request.get_json()
-    res = database_helper.get_user_data_by_token(data['token'])
+    token = request.headers.get('Authorization')
+    res = database_helper.get_user_data_by_token(token)
 
     if res["success"]:
         return res, 200
     else:
         return res, 401
 
-@app.route("/get_user_data_by_email/")
+@app.route("/get_user_data_by_email/", methods = ['GET'])
 def get_user_data_by_email():
     data = request.get_json()
-    res = database_helper.get_user_data_by_email(data['token'], data['email'])
+    token = request.headers.get('Authorization')
+    res = database_helper.get_user_data_by_email(token, data['email'])
 
     if res["success"]:
         return res, 200
@@ -83,20 +85,38 @@ def get_user_data_by_email():
         return res, 401
 
 
-@app.route("/get_user_messages_by_token/")
+@app.route("/get_user_messages_by_token/", methods = ['GET'])
 def get_user_messages_by_token():
-    return
+    token = request.headers.get('Authorization')
+    res = database_helper.get_user_messages_by_token(token)
+
+    if res["success"]:
+        return res, 200
+    else:
+        return res, 401
 
 
-@app.route("/get_user_messages_by_email/")
+@app.route("/get_user_messages_by_email/", methods = ['GET'])
 def get_user_messages_by_email():
+    data = request.get_json()
+    token = request.headers.get('Authorization')
+    res = database_helper.get_user_messages_by_email(token, data['email'])
 
-    return 
+    if res["success"]:
+        return res, 200
+    else:
+        return res, 401
 
-@app.route("/post_message/")
+@app.route("/post_message/", methods = ['POST'])
 def post_message():
+    data = request.get_json()
+    token = request.headers.get('Authorization')
+    res = database_helper.post_messsage(token, data['message'], data['email'])
 
-    return 
+    if res['success']:
+        return res, 201
+    else:
+        return res, 401 
 
 if __name__ == '__main__':
     app.run()
