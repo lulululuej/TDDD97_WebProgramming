@@ -119,8 +119,8 @@ def post_messsage(token, message, email):
     db = get_db()
     # see if this token exist or not
     cursor = db.execute("select email from user where token = (?);", [token])
-    writer = cursor.fetchone()[0]
-    
+    writer = cursor.fetchone()
+    print(writer)
     if not writer:
         return {"success": False, "message": "You are not signed in."}
     else:
@@ -129,8 +129,7 @@ def post_messsage(token, message, email):
         if not match:
             return {"success": False, "message": "No such user."}
         # insert msg
-        print(writer)
-        db.execute("insert into message (writer, email, content) values (?, ?, ?);", (writer, email, message))
+        db.execute("insert into message (writer, email, content) values (?, ?, ?);", (writer[0], email, message))
         db.commit()
         db.close()
         return {"success": True, "message": "Message posted"}

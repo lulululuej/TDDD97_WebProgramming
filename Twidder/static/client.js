@@ -10,7 +10,7 @@ displayView = function(view) {
 /* Code is executed as page is loaded */
 window.onload = function() {
   let token = localStorage.getItem("token");
-
+  console.log(token);
   if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     showPanel(localStorage.getItem('lastPanel'));
@@ -75,11 +75,32 @@ validateInputLength = function() {
 }
 
 /* Signup from client-side */
-signUp = function() {;
+signUp = function() {
   if (validatePassword() && validateEmail("Sign Up") && validateInputLength()) {
-    
     const data = {email:document.getElementById("email-input").value, password:document.getElementById("password-input").value, firstname:document.getElementById("firstname-input").value, familyname:document.getElementById("familyname-input").value, gender:document.getElementById("gender-drop").value, city:document.getElementById("city-input").value, country:document.getElementById("country-input").value};
     //console.log(data);
+    let req = new XMLHttpRequest();
+    req.open("POST", "/sign_up", true);
+    req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    req.send(JSON.stringify(data));
+
+    req.onreadystatechange =  function(){
+      if (req.readyState == 4){
+        if (req.status == 201){
+          let token = serverstub.signIn(document.getElementById("email-input").value, document.getElementById("password-input").value).data;
+          localStorage.setItem("token", token);
+          console.log("token: ", localStorage.getItem("token"));
+          displayView("profile")
+        }else {
+          const inputEmail = window.document.getElementById("email-input");
+          let resp = JSON.parse(req.responseText);
+          console.log(resp);
+          inputEmail.setCustomValidity(resp['message']);
+          inputEmail.reportValidity();
+        }
+      }
+    }
+
     if (serverstub.signUp(data).success) {
       let token = serverstub.signIn(document.getElementById("email-input").value, document.getElementById("password-input").value).data;
       localStorage.setItem("token", token);
