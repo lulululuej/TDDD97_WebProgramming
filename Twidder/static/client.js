@@ -1,6 +1,7 @@
 /* Displayes a view */
 displayView = function(view) {
   if (view == "profile") {
+    const token = localStorage.getItem("token");
     document.getElementById("container").innerHTML = document.getElementById("profileview").innerHTML;
     populateInformation();
     updateWall();
@@ -10,7 +11,7 @@ displayView = function(view) {
 /* Code is executed as page is loaded */
 window.onload = function() {
   let token = localStorage.getItem("token");
-  console.log(token);
+  console.log("onload: ", token);
   if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     showPanel(localStorage.getItem('lastPanel'));
@@ -77,40 +78,52 @@ validateInputLength = function() {
 /* Signup from client-side */
 signUp = function() {
   if (validatePassword() && validateEmail("Sign Up") && validateInputLength()) {
-    const data = {email:document.getElementById("email-input").value, password:document.getElementById("password-input").value, firstname:document.getElementById("firstname-input").value, familyname:document.getElementById("familyname-input").value, gender:document.getElementById("gender-drop").value, city:document.getElementById("city-input").value, country:document.getElementById("country-input").value};
-    //console.log(data);
-    let req = new XMLHttpRequest();
-    req.open("POST", "/sign_up", true);
-    req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-    req.send(JSON.stringify(data));
+    const email = document.getElementById("email-input").value;
+    const password = document.getElementById("password-input").value;
+    const signup_data = {"email": email, "password": password, "firstname": document.getElementById("firstname-input").value, "familyname": document.getElementById("familyname-input").value, "gender": document.getElementById("gender-drop").value, "city": document.getElementById("city-input").value, "country": document.getElementById("country-input").value};
+  
+    let signup_req = new XMLHttpRequest();
+    signup_req.open("POST", "/sign_up", true);
+    signup_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    signup_req.send(JSON.stringify(signup_data));
 
-    req.onreadystatechange =  function(){
-      if (req.readyState == 4){
-        if (req.status == 201){
-          let token = serverstub.signIn(document.getElementById("email-input").value, document.getElementById("password-input").value).data;
-          localStorage.setItem("token", token);
-          console.log("token: ", localStorage.getItem("token"));
-          displayView("profile")
-        }else {
-          const inputEmail = window.document.getElementById("email-input");
-          let resp = JSON.parse(req.responseText);
-          console.log(resp);
-          inputEmail.setCustomValidity(resp['message']);
-          inputEmail.reportValidity();
+    signup_req.onreadystatechange =  function(){
+      if (signup_req.readyState == 4){
+        if (signup_req.status == 201){
+          const signin_data = {"email": email, "password": password};
+          let signin_req = new XMLHttpRequest();
+          signin_req.open("POST", "/sign_in", true);
+          signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+          signin_req.send(JSON.stringify(signin_data));
+
+          signin_req.onreadystatechange =  function(){
+            if (signin_req.readyState == 4){
+                if (signin_req.status == 201){
+                    let token = JSON.parse(signin_req.responseText)['data'];
+                    localStorage.setItem("token", token);
+                    console.log("signup: ", localStorage.getItem("token"));
+                    displayView("profile", token);
+    
+                }else {
+                  const inputEmail = window.document.getElementById("email-input");
+                  let resp = JSON.parse(signin_req.responseText);
+                  console.log(resp);
+                  inputEmail.setCustomValidity(resp['message']);
+                  inputEmail.reportValidity();
+                }
+    
+            }
+    
         }
+      } else  {
+        let resp = JSON.parse(signin_req.responseText);
+        console.log(resp);
+        inputEmail.setCustomValidity(resp['message']);
+        inputEmail.reportValidity();
+                
       }
     }
-
-    if (serverstub.signUp(data).success) {
-      let token = serverstub.signIn(document.getElementById("email-input").value, document.getElementById("password-input").value).data;
-      localStorage.setItem("token", token);
-      console.log("token: ", localStorage.getItem("token"));
-      displayView("profile")
-    } else {
-      const inputEmail = window.document.getElementById("email-input");
-      inputEmail.setCustomValidity(serverstub.signUp(data).message);
-      inputEmail.reportValidity();
-    }
+   }
   }
 }
 
@@ -118,24 +131,56 @@ signIn = function() {
   validateEmail("Sign In");
   let username = document.getElementById("login-email").value;
   let password = document.getElementById("login-password").value;
-  let data = serverstub.signIn(username, password);
-  if (data.success) {
-    let token = serverstub.signIn(username, password).data;
-    localStorage.setItem("token", token);
-    displayView("profile");
-  } else {
-    const loginButton = window.document.getElementById("login-button");
-    loginButton.setCustomValidity(serverstub.signIn(data).message);
-    loginButton.reportValidity();
-    return;
+
+  const signin_data = {"email": username, "password": password};
+  let signin_req = new XMLHttpRequest();
+  signin_req.open("POST", "/sign_in", true);
+  signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  signin_req.send(JSON.stringify(signin_data));
+
+  signin_req.onreadystatechange =  function(){
+    if (signin_req.readyState == 4){
+        if (signin_req.status == 201){
+            let token = JSON.parse(signin_req.responseText)['data'];
+            localStorage.setItem("token", token);
+            console.log("signin: ", localStorage.getItem("token"));
+            displayView("profile", token);
+
+        }else {
+          let resp = JSON.parse(signin_req.responseText);
+
+          const loginButton = window.document.getElementById("login-button");
+          loginButton.setCustomValidity(resp['message']);
+          loginButton.reportValidity();
+          return;
+        }
+
+    }
+
   }
 }
 
 signOut = function() {
-  let token = localStorage.getItem("token");
-  serverstub.signOut(token);
-  localStorage.removeItem('token');
-  window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
+  let signout_req = new XMLHttpRequest();
+  signout_req.open("PATCH", "/sign_out", true);
+  signout_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  signout_req.setRequestHeader("Authorization", localStorage.getItem("token"));
+  signout_req.send();
+
+  signout_req.onreadystatechange =  function(){
+    if (signout_req.readyState == 4){
+        if (signout_req.status == 204){
+          localStorage.removeItem("token");
+          window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
+        }else {
+          let resp = JSON.parse(signout_req.responseText);
+          console.log(resp.message);
+          return;
+        }
+
+    }
+
+  }
 }
  
 showPanel = function(panelName) {
@@ -158,14 +203,31 @@ showPanel = function(panelName) {
 }
 
 populateInformation = function() {
-  let token = localStorage.getItem("token");
-  let data = serverstub.getUserDataByToken(token);
-  document.getElementById("firstname-text").innerText = data['data'].firstname;
-  document.getElementById("familyname-text").innerText = data['data'].familyname;
-  document.getElementById("email-text").innerText = data['data'].email;
-  document.getElementById("gender-text").innerText = data['data'].gender;
-  document.getElementById("city-text").innerText = data['data'].city;
-  document.getElementById("country-text").innerText = data['data'].country;
+  token = localStorage.getItem("token");
+  let getdata_req = new XMLHttpRequest();
+  getdata_req.open("GET", "/get_user_data_by_token", true);
+  getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  getdata_req.setRequestHeader("Authorization", token);
+
+  getdata_req.send();
+
+  getdata_req.onreadystatechange =  function(){
+    if (getdata_req.readyState == 4){
+      if (getdata_req.status == 200) {
+        let resp = JSON.parse(getdata_req.responseText);
+        let data = resp['data'];
+        document.getElementById("firstname-text").innerText = data.firstname;
+        document.getElementById("familyname-text").innerText = data.familyname;
+        document.getElementById("email-text").innerText = data.email;
+        document.getElementById("gender-text").innerText = data.gender;
+        document.getElementById("city-text").innerText = data.city;
+        document.getElementById("country-text").innerText = data.country;
+      } else {
+        let resp = JSON.parse(getdata_req.responseText);
+        console.log(resp['message']);
+      }
+    }
+  }
 }
 
 changeActPassword = function() {
@@ -183,23 +245,72 @@ changeActPassword = function() {
     changeCheckPass.setCustomValidity('Password too short!!!');
     changeCheckPass.reportValidity();
     return false;
-  } 
+  }
+  const pw_data = {"oldpw": oldPassword, "newpw": newPassword}
+  let changepw_req = new XMLHttpRequest();
+  changepw_req.open("POST", "/change_password", true);
+  changepw_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  changepw_req.setRequestHeader("Authorization", token);
 
-  let res = serverstub.changePassword(token, oldPassword, newPassword);
+  changepw_req.send(JSON.stringify(pw_data));
 
-  if(!res['success']) {
-    changeCheckPass.setCustomValidity(res['message']);
-    changeCheckPass.reportValidity();
-    return false;
-  }else if(res['success']){
-    changeCheckPass.setCustomValidity(res['message']);
-    changeCheckPass.reportValidity();
-    return true;
+  changepw_req.onreadystatechange =  function(){
+    if (changepw_req.readyState == 4){
+      if (changepw_req.status == 201) {
+        resp = JSON.parse(changepw_req.responseText);
+        changeCheckPass.setCustomValidity(resp['message']);
+        changeCheckPass.reportValidity();
+        return true;
+      } else {
+        let resp = JSON.parse(getdata_req.responseText);
+        changeCheckPass.setCustomValidity(resp['message']);
+        changeCheckPass.reportValidity();
+        return false;
+      }
+    }
   }
 }
 
 updateWall = function() {
-  let token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  let getmessages_req = new XMLHttpRequest();
+  getmessages_req.open("GET", "/get_user_messages_by_token", true);
+  getmessages_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  getmessages_req.setRequestHeader("Authorization", token);
+
+  getmessages_req.send();
+
+  getmessages_req.onreadystatechange =  function(){
+    if (getmessages_req.readyState == 4){
+      if (getmessages_req.status == 200) {
+        let resp = JSON.parse(getmessages_req.responseText);
+        let messages = resp['data'];
+        let messageList = document.getElementById("user-wall-container");
+        messageList.innerHTML = '';
+        let i =0;
+        for(const obj of messages) {
+          let msg = obj.content;
+          let sender = obj.writer;
+          messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
+          let id = "wall-msg-container"+i;
+      
+          document.getElementById(id).style.height = 'fit-content(6em)';
+          document.getElementById(id).style.border = '1px solid black';
+          document.getElementById(id).style.marginBottom = '10px';
+          document.getElementById(id).style.backgroundColor = 'white';
+          document.getElementById(id).style.borderRadius = '5px';
+          document.getElementById(id).style.padding = "10px 10px 10px 10px";
+          i++;
+        }
+      } else {
+        let resp = JSON.parse(getmessages_req.responseText);     
+        console.log(resp);
+      }
+
+    }
+  }
+
+/*
   let data = serverstub.getUserMessagesByToken(token)['data'];
   let messageList = document.getElementById("user-wall-container");
   messageList.innerHTML = '';
@@ -217,13 +328,13 @@ updateWall = function() {
     document.getElementById(id).style.borderRadius = '5px';
     document.getElementById(id).style.padding = "10px 10px 10px 10px";
     i++;
-  }
+  }*/
 }
 
 postMessage = function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('user-text-box').value;
-  //console.log(msg);
+ 
   if(msg.length == 0) {
     document.getElementById('user-text-box').value = "No empty message!!!";
     return;
