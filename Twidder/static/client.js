@@ -309,26 +309,6 @@ updateWall = function() {
 
     }
   }
-
-/*
-  let data = serverstub.getUserMessagesByToken(token)['data'];
-  let messageList = document.getElementById("user-wall-container");
-  messageList.innerHTML = '';
-  let i =0;
-  for(const obj of data) {
-    let msg = obj.content;
-    let sender = obj.writer;
-    messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
-    let id = "wall-msg-container"+i;
- 
-    document.getElementById(id).style.height = 'fit-content(6em)';
-    document.getElementById(id).style.border = '1px solid black';
-    document.getElementById(id).style.marginBottom = '10px';
-    document.getElementById(id).style.backgroundColor = 'white';
-    document.getElementById(id).style.borderRadius = '5px';
-    document.getElementById(id).style.padding = "10px 10px 10px 10px";
-    i++;
-  }*/
 }
 
 postMessage = function() {
@@ -339,50 +319,120 @@ postMessage = function() {
     document.getElementById('user-text-box').value = "No empty message!!!";
     return;
   }
-  let email = serverstub.getUserDataByToken(token)['data'].email;
-  let data = serverstub.postMessage(token, msg, email);
-  if(data.success) {
-    document.getElementById('user-text-box').value = "You posted a message!";
+  let getdata_req = new XMLHttpRequest();
+  getdata_req.open("GET", "/get_user_data_by_token", true);
+  getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  getdata_req.setRequestHeader("Authorization", token);
+
+  getdata_req.send();
+
+  getdata_req.onreadystatechange =  function(){
+    if (getdata_req.readyState == 4){
+      if (getdata_req.status == 200) {
+        let resp = JSON.parse(getdata_req.responseText);
+        let email = resp['data'].email;
+
+        let data = {"message": msg, "email": email}
+        let postmessage_req = new XMLHttpRequest();
+        postmessage_req.open("POST", "/post_message", true);
+        postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        postmessage_req.setRequestHeader("Authorization", token);
+        postmessage_req.send(JSON.stringify(data));
+
+        postmessage_req.onreadystatechange =  function(){
+          if (postmessage_req.readyState == 4){
+            if (postmessage_req.status == 201) {
+              document.getElementById('user-text-box').value = "You posted a message!";
+              updateWall();
+            }
+            else {
+              let resp = JSON.parse(postmessage_req.responseText);
+              console.log(resp['message']);
+            }
+          }
+        }
+      } else {
+        let resp = JSON.parse(getdata_req.responseText);
+        console.log(resp['message']);
+      }
+    }
   }
-  updateWall();
 }
 
 getUserInformation = function() {
   const token = localStorage.getItem("token");
   let email = document.getElementById("search-user-input").value;
-  let userData = serverstub.getUserDataByEmail(token, email);
-  document.getElementById("user-container").style.display = "inline-flex";
-  document.getElementById("friend-firstname-text").innerText = userData['data'].firstname;
-  document.getElementById("friend-familyname-text").innerText = userData['data'].familyname;
-  document.getElementById("friend-email-text").innerText = userData['data'].email;
-  document.getElementById("friend-gender-text").innerText = userData['data'].gender;
-  document.getElementById("friend-city-text").innerText = userData['data'].city;
-  document.getElementById("friend-country-text").innerText = userData['data'].country;
 
-  updateUserWall();
+  let getdata_req = new XMLHttpRequest();
+  getdata_req.open("GET", "/get_user_data_by_email/" + email, true);
+  getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  getdata_req.setRequestHeader("Authorization", token);
+
+  getdata_req.send();
+
+  getdata_req.onreadystatechange =  function(){
+    if (getdata_req.readyState == 4){
+      if (getdata_req.status == 200) {
+        let resp = JSON.parse(getdata_req.responseText);
+        let data = resp['data'];
+
+        document.getElementById("user-container").style.display = "inline-flex";
+        document.getElementById("friend-firstname-text").innerText = data.firstname;
+        document.getElementById("friend-familyname-text").innerText = data.familyname;
+        document.getElementById("friend-email-text").innerText = data.email;
+        document.getElementById("friend-gender-text").innerText = data.gender;
+        document.getElementById("friend-city-text").innerText = data.city;
+        document.getElementById("friend-country-text").innerText = data.country;
+
+        updateUserWall();
+      } else {
+        let resp = JSON.parse(getdata_req.responseText);
+        console.log(resp['message']);
+      }
+    }
+  }
 }
 
 updateUserWall = function() {
   let token = localStorage.getItem("token");
   let email = document.getElementById("friend-email-text").innerText;
-  let data = serverstub.getUserMessagesByEmail(token, email)['data'];
-  let messageList = document.getElementById("friend-wall-container");
-  messageList.innerHTML = '';
-  let i = 0;
-  for(const obj of data) {
-    let msg = obj.content;
-    console.log(obj);
-    let sender = obj.writer;
-    messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
-    let id = "friend-wall-msg-container"+i;
- 
-    document.getElementById(id).style.height = 'fit-content(6em)';
-    document.getElementById(id).style.border = '1px solid black';
-    document.getElementById(id).style.marginBottom = '10px';
-    document.getElementById(id).style.backgroundColor = 'white';
-    document.getElementById(id).style.borderRadius = '5px';
-    document.getElementById(id).style.padding = "10px 10px 10px 10px";
-    i++;
+
+  let getmessages_req = new XMLHttpRequest();
+  getmessages_req.open("GET", "/get_user_messages_by_email/" + email, true);
+  getmessages_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  getmessages_req.setRequestHeader("Authorization", token);
+
+  getmessages_req.send();
+
+  getmessages_req.onreadystatechange =  function(){
+    if (getmessages_req.readyState == 4){
+      if (getmessages_req.status == 200) {
+        let resp = JSON.parse(getmessages_req.responseText);
+        let messages = resp['data'];
+        let messageList = document.getElementById("friend-wall-container");
+        messageList.innerHTML = '';
+        let i = 0;
+        for(const obj of messages) {
+          let msg = obj.content;
+          console.log(obj);
+          let sender = obj.writer;
+          messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
+          let id = "friend-wall-msg-container"+i;
+       
+          document.getElementById(id).style.height = 'fit-content(6em)';
+          document.getElementById(id).style.border = '1px solid black';
+          document.getElementById(id).style.marginBottom = '10px';
+          document.getElementById(id).style.backgroundColor = 'white';
+          document.getElementById(id).style.borderRadius = '5px';
+          document.getElementById(id).style.padding = "10px 10px 10px 10px";
+          i++;
+        }
+      } else {
+        let resp = JSON.parse(getmessages_req.responseText);     
+        console.log(resp);
+      }
+
+    }
   }
 }
 
@@ -390,9 +440,24 @@ sendMessage = function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('friend-text-box').value;
   let email = document.getElementById("friend-email-text").innerText;
-  let data = serverstub.postMessage(token, msg, email);
-  if(data.success) {
-    document.getElementById('friend-text-box').value = "You sent a message!";
+
+  let data = {"message": msg, "email": email};
+  let postmessage_req = new XMLHttpRequest();
+  postmessage_req.open("POST", "/post_message", true);
+  postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  postmessage_req.setRequestHeader("Authorization", token);
+  postmessage_req.send(JSON.stringify(data));
+
+  postmessage_req.onreadystatechange =  function(){
+    if (postmessage_req.readyState == 4){
+      if (postmessage_req.status == 201) {
+        document.getElementById('friend-text-box').value = "You sent a message!";
+        updateUserWall();
+      }
+      else {
+        let resp = JSON.parse(postmessage_req.responseText);
+        console.log(resp['message']);
+      }
+    }
   }
-  updateUserWall();
 }

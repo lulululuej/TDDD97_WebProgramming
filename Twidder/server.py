@@ -60,7 +60,7 @@ def sign_out():
     else:
         return res, 401
 
-@app.route("/change_password/")
+@app.route("/change_password/", methods=['POST'])
 def change_password():
     data = request.get_json()
     if ('oldpw' not in data or 'newpw' not in data):
