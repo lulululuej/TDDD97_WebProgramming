@@ -1,3 +1,5 @@
+
+
 /* Displayes a view */
 displayView = function(view) {
   if (view == "profile") {
@@ -104,7 +106,7 @@ signUp = function() {
                     localStorage.setItem("token", token);
                     console.log("signup: ", localStorage.getItem("token"));
                     displayView("profile", token);
-                    let socket = io();
+                    let socket = io.connect();
                     socket.on('connect', function() {
                       socket.emit('connection', {data: 'i am connected'});
                     });
