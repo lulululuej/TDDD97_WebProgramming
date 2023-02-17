@@ -18,7 +18,7 @@ def root():
 
 @sockio.on("connection")
 def handleConnection(data):
-    print('received data: ' + data)
+    print('received data: ' + str(data))
 
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
@@ -42,7 +42,7 @@ def sign_in():
     else:
         print(res['message'])
         return res, 403
-# test
+
 @app.route("/sign_up/", methods = ['POST'])
 def sign_up():
     data = request.get_json()

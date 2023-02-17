@@ -85,7 +85,7 @@ signUp = function() {
     const signup_data = {"email": email, "password": password, "firstname": document.getElementById("firstname-input").value, "familyname": document.getElementById("familyname-input").value, "gender": document.getElementById("gender-drop").value, "city": document.getElementById("city-input").value, "country": document.getElementById("country-input").value};
     
     let signup_req = new XMLHttpRequest();
-    signup_req.open("POST", "/sign_up", true);
+    signup_req.open("POST", "/sign_up/", true);
     signup_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     signup_req.send(JSON.stringify(signup_data));
 
@@ -95,7 +95,7 @@ signUp = function() {
           const signin_data = {"email": email, "password": password};
           console.log(signin_data);
           let signin_req = new XMLHttpRequest();
-          signin_req.open("POST", "/sign_in", true);
+          signin_req.open("POST", "/sign_in/", true);
           signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
           signin_req.send(JSON.stringify(signin_data));
 
@@ -140,7 +140,7 @@ signIn = function() {
 
   const signin_data = {"email": username, "password": password};
   let signin_req = new XMLHttpRequest();
-  signin_req.open("POST", "/sign_in", true);
+  signin_req.open("POST", "/sign_in/", true);
   signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   signin_req.send(JSON.stringify(signin_data));
 
@@ -171,7 +171,7 @@ signIn = function() {
 
 signOut = function() {
   let signout_req = new XMLHttpRequest();
-  signout_req.open("PATCH", "/sign_out", true);
+  signout_req.open("PATCH", "/sign_out/", true);
   signout_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   signout_req.setRequestHeader("Authorization", localStorage.getItem("token"));
   signout_req.send();
@@ -257,7 +257,7 @@ changeActPassword = function() {
   }
   const pw_data = {"oldpw": oldPassword, "newpw": newPassword}
   let changepw_req = new XMLHttpRequest();
-  changepw_req.open("POST", "/change_password", true);
+  changepw_req.open("POST", "/change_password/", true);
   changepw_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   changepw_req.setRequestHeader("Authorization", token);
 
@@ -283,7 +283,7 @@ changeActPassword = function() {
 updateWall = function() {
   const token = localStorage.getItem("token");
   let getmessages_req = new XMLHttpRequest();
-  getmessages_req.open("GET", "/get_user_messages_by_token", true);
+  getmessages_req.open("GET", "/get_user_messages_by_token/", true);
   getmessages_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getmessages_req.setRequestHeader("Authorization", token);
 
@@ -329,7 +329,7 @@ postMessage = function() {
     return;
   }
   let getdata_req = new XMLHttpRequest();
-  getdata_req.open("GET", "/get_user_data_by_token", true);
+  getdata_req.open("GET", "/get_user_data_by_token/", true);
   getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getdata_req.setRequestHeader("Authorization", token);
 
@@ -343,7 +343,7 @@ postMessage = function() {
 
         let data = {"message": msg, "email": email}
         let postmessage_req = new XMLHttpRequest();
-        postmessage_req.open("POST", "/post_message", true);
+        postmessage_req.open("POST", "/post_message/", true);
         postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         postmessage_req.setRequestHeader("Authorization", token);
         postmessage_req.send(JSON.stringify(data));
@@ -452,7 +452,7 @@ sendMessage = function() {
 
   let data = {"message": msg, "email": email};
   let postmessage_req = new XMLHttpRequest();
-  postmessage_req.open("POST", "/post_message", true);
+  postmessage_req.open("POST", "/post_message/", true);
   postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   postmessage_req.setRequestHeader("Authorization", token);
   postmessage_req.send(JSON.stringify(data));
