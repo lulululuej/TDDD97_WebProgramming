@@ -81,7 +81,7 @@ signUp = function() {
     const email = document.getElementById("email-input").value;
     const password = document.getElementById("password-input").value;
     const signup_data = {"email": email, "password": password, "firstname": document.getElementById("firstname-input").value, "familyname": document.getElementById("familyname-input").value, "gender": document.getElementById("gender-drop").value, "city": document.getElementById("city-input").value, "country": document.getElementById("country-input").value};
-  
+    
     let signup_req = new XMLHttpRequest();
     signup_req.open("POST", "/sign_up", true);
     signup_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
@@ -91,6 +91,7 @@ signUp = function() {
       if (signup_req.readyState == 4){
         if (signup_req.status == 201){
           const signin_data = {"email": email, "password": password};
+          console.log(signin_data);
           let signin_req = new XMLHttpRequest();
           signin_req.open("POST", "/sign_in", true);
           signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
