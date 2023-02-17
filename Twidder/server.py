@@ -3,12 +3,22 @@ import database_helper as database_helper
 import math
 import random 
 import re
+from flask_socketio import SocketIO, send, emit
+from flask_session import Session
+
 
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+sockio = SocketIO(app)
 
 @app.route("/", methods = ['GET'])
 def root():
     return app.send_static_file("client.html"), 200
+
+@sockio.on("connection")
+def handleConnection(data):
+    print('received data: ' + data)
 
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
@@ -128,5 +138,6 @@ def post_message():
         return res, 401 
 
 if __name__ == '__main__':
-    app.run()
+    #app.run()
+    sockio.run(app, debug=True, port=5004)
 
