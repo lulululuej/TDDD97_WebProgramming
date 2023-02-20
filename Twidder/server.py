@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+import json
 import database_helper as database_helper
 import math
 import random 
@@ -6,11 +7,10 @@ import re
 from flask_socketio import SocketIO, send, emit
 from flask_session import Session
 
-
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
-sockio = SocketIO(app)
+sockio = SocketIO(app, manage_session=False)
 
 @app.route("/", methods = ['GET'])
 def root():
@@ -18,7 +18,16 @@ def root():
 
 @sockio.on("connection")
 def handleConnection(data):
-    print('received data: ' + str(data))
+    data = json.loads(data)
+    print(data)
+    resp = database_helper.get_user(data['email'])
+    print(resp['message'])
+    if(resp['success']):
+        if(resp['message']['token']):
+            print("User already login through previous page! Logout the older one.")
+            #database_helper.add_token(data['email'], data['token'])
+            #res = database_helper.delete_token(resp['message']['token'])
+    
 
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():

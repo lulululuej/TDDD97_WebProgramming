@@ -108,8 +108,9 @@ signUp = function() {
                     displayView("profile", token);
                     let socket = io.connect();
                     socket.on('connect', function() {
-                      socket.emit('connection', {data: 'i am connected'});
+                      socket.emit('connection', "i am connected");
                     });
+
                 }else {
                   const inputEmail = window.document.getElementById("email-input");
                   let resp = JSON.parse(signin_req.responseText);
@@ -117,9 +118,8 @@ signUp = function() {
                   inputEmail.setCustomValidity(resp['message']);
                   inputEmail.reportValidity();
                 }
-    
             }
-    
+
         }
       } else  {
         let resp = JSON.parse(signup_req.responseText);
@@ -151,10 +151,12 @@ signIn = function() {
             localStorage.setItem("token", token);
             console.log("signin: ", localStorage.getItem("token"));
             displayView("profile", token);
-            let socket = io();
+            let socket = io.connect();
             socket.on('connect', function() {
-              socket.emit('connection', {data: 'i am connected'});
+              console.log(username, token);
+              socket.emit('connection', JSON.stringify({"email": username, "token": token}));
             });
+
         }else {
           let resp = JSON.parse(signin_req.responseText);
 
