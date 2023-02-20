@@ -10,6 +10,14 @@
         <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow" rel="stylesheet">
         <script src="/static/client.js"></script>
         <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+        <script>
+            var socket = io.connect();
+            socket.on('logout', function(data) {
+                console.log("data: ", data);
+                window.document.location.reload();
+                console.log("after reload");
+            });
+        </script>
         <script id="welcomeview" type="text/view">
             <div id="main">
                 <div id="logo-img">

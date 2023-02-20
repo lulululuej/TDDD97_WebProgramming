@@ -13,15 +13,15 @@ displayView = function(view) {
 /* Code is executed as page is loaded */
 window.onload = function() {
   let token = localStorage.getItem("token");
-  console.log("onload: ", token);
-  if (token) {
+  
+  /*if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     showPanel(localStorage.getItem('lastPanel'));
     populateInformation();
     updateWall();
-  } else {
+  } else {*/
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
-  }
+  //}
 }
 
 /* Validation off chosen password */
@@ -107,10 +107,11 @@ signUp = function() {
                     console.log("signup: ", localStorage.getItem("token"));
                     displayView("profile", token);
                     let socket = io.connect();
+                    localStorage.setItem("socket", socket);
                     socket.on('connect', function() {
                       socket.emit('connection', "i am connected");
                     });
-
+                    
                 }else {
                   const inputEmail = window.document.getElementById("email-input");
                   let resp = JSON.parse(signin_req.responseText);

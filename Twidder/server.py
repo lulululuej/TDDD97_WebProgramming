@@ -23,10 +23,12 @@ def handleConnection(data):
     resp = database_helper.get_user(data['email'])
     print(resp['message'])
     if(resp['success']):
-        if(resp['message']['token']):
+        if(resp['message']['token'] != data["token"]):
             print("User already login through previous page! Logout the older one.")
-            #database_helper.add_token(data['email'], data['token'])
-            #res = database_helper.delete_token(resp['message']['token'])
+            res = database_helper.delete_token(resp['message']['token'])
+            sockio.emit('logout', {'data': True})
+            database_helper.add_token(data['email'], data['token'])
+            
     
 
 @app.route("/sign_in/", methods = ['POST'])
