@@ -14,14 +14,14 @@ displayView = function(view) {
 window.onload = function() {
   let token = localStorage.getItem("token");
   
-  /*if (token) {
+  /* if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     showPanel(localStorage.getItem('lastPanel'));
     populateInformation();
     updateWall();
-  } else {*/
+  } else { */
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
-  //}
+  /* } */
 }
 
 /* Validation off chosen password */
@@ -107,10 +107,14 @@ signUp = function() {
                     console.log("signup: ", localStorage.getItem("token"));
                     displayView("profile", token);
                     let socket = io.connect();
-                    localStorage.setItem("socket", socket);
                     socket.on('connect', function() {
-                      socket.emit('connection', "i am connected");
+                      socket.emit('connection', JSON.stringify({"email": email, "token": token}));
                     });
+                    socket.on('discontinue', (sres) => {
+                      console.log("HEERE")
+                      console.log("in client: ", sres['message'])
+                    })
+
                     
                 }else {
                   const inputEmail = window.document.getElementById("email-input");

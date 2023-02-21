@@ -39,7 +39,6 @@ def add_token(email, token):
 
 def delete_token(token):
     db = get_db()
-    print(token)
     if token:
         try:
             # see if this token exist or not
@@ -161,7 +160,6 @@ def get_user_messages_by_token(token):
         return {"success": False, "message": "You are not signed in."}
     else:
         return get_user_messages_by_email(token, email[0])
-
 
 def disconnect():
     db = getattr(g, 'db', None)

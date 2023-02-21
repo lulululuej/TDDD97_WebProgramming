@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import json
 import database_helper as database_helper
 import math
@@ -7,30 +7,29 @@ import re
 from flask_socketio import SocketIO, send, emit
 from flask_session import Session
 
+sid_dict = {}
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
+socketio = SocketIO(app, manage_session=False)
 Session(app)
-sockio = SocketIO(app, manage_session=False)
 
 @app.route("/", methods = ['GET'])
 def root():
     return app.send_static_file("client.html"), 200
 
-@sockio.on("connection")
+@socketio.on("connection")
 def handleConnection(data):
     data = json.loads(data)
-    print(data)
-    resp = database_helper.get_user(data['email'])
-    print(resp['message'])
-    if(resp['success']):
-        if(resp['message']['token'] != data["token"]):
-            print("User already login through previous page! Logout the older one.")
-            res = database_helper.delete_token(resp['message']['token'])
-            sockio.emit('logout', {'data': True})
-            database_helper.add_token(data['email'], data['token'])
-            
-    
 
+    if data["email"] in sid_dict:
+        print("", data["email"], "is already logged in: Discontinuing older connection")
+        socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])
+        
+    sid_dict[data["email"]] = request.sid
+    print("Created new connection")
+
+
+            
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
     param = request.get_json()
@@ -46,6 +45,7 @@ def sign_in():
                 token += letters[math.floor(random.random() * len(letters))]
             
             database_helper.add_token(param['email'], token)
+            
             return {"success": True, "message": "Successfully signed in.", "data": token}, 201
             
         else:
@@ -75,11 +75,16 @@ def sign_up():
 @app.route("/sign_out/", methods = ['PATCH'])
 def sign_out():
     token = request.headers.get('Authorization')
+    user_data = database_helper.get_user_data_by_token(token)
     res = database_helper.delete_token(token)
+    del sid_dict[user_data["data"]["email"]]
+    
     if res['success']:
         return res, 204
     else:
         return res, 401
+
+    
 
 @app.route("/change_password/", methods=['POST'])
 def change_password():
