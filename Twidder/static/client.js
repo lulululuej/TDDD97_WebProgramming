@@ -14,14 +14,14 @@ displayView = function(view) {
 window.onload = function() {
   let token = localStorage.getItem("token");
   
-  /* if (token) {
+  if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     showPanel(localStorage.getItem('lastPanel'));
     populateInformation();
     updateWall();
-  } else { */
+  } else { 
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
-  /* } */
+  } 
 }
 
 /* Validation off chosen password */
@@ -109,13 +109,7 @@ signUp = function() {
                     let socket = io.connect();
                     socket.on('connect', function() {
                       socket.emit('connection', JSON.stringify({"email": email, "token": token}));
-                    });
-                    socket.on('discontinue', (sres) => {
-                      console.log("HEERE")
-                      console.log("in client: ", sres['message'])
-                    })
-
-                    
+                    });      
                 }else {
                   const inputEmail = window.document.getElementById("email-input");
                   let resp = JSON.parse(signin_req.responseText);
@@ -154,13 +148,18 @@ signIn = function() {
         if (signin_req.status == 201){
             let token = JSON.parse(signin_req.responseText)['data'];
             localStorage.setItem("token", token);
-            console.log("signin: ", localStorage.getItem("token"));
             displayView("profile", token);
             let socket = io.connect();
             socket.on('connect', function() {
-              console.log(username, token);
               socket.emit('connection', JSON.stringify({"email": username, "token": token}));
             });
+            socket.on('discontinue', (sres) => {
+              console.log(sres['message'])
+              localStorage.removeItem("token");
+              window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
+              socket.emit('disconnect', JSON.stringify({"email": username}));
+            })
+            
 
         }else {
           let resp = JSON.parse(signin_req.responseText);

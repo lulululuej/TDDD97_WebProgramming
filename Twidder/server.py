@@ -22,13 +22,14 @@ def handleConnection(data):
     data = json.loads(data)
 
     if data["email"] in sid_dict:
-        print("", data["email"], "is already logged in: Discontinuing older connection")
-        socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])
-        
+        socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])  
     sid_dict[data["email"]] = request.sid
-    print("Created new connection")
+  
 
-
+@socketio.on('disconnect')
+def handleDisconnection(data):
+    data = json.loads(data)
+    print("Disconnected from socket", data['email'])
             
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
@@ -155,5 +156,5 @@ def post_message():
 
 if __name__ == '__main__':
     #app.run()
-    sockio.run(app, debug=True, port=5004)
+    socketio.run(app, debug=True, port=5004)
 
