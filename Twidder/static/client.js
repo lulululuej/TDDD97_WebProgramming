@@ -151,13 +151,12 @@ signIn = function() {
             displayView("profile", token);
             let socket = io.connect();
             socket.on('connect', function() {
-              socket.emit('connection', JSON.stringify({"email": username, "token": token}));
+              socket.emit('connection', token);
             });
             socket.on('discontinue', (sres) => {
               console.log(sres['message'])
               localStorage.removeItem("token");
               window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
-              socket.emit('disconnect', JSON.stringify({"email": username}));
             })
             
 

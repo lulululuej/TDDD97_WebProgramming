@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request, jsonify, session
-import json
 import database_helper as database_helper
 import math
 import random 
 import re
 from flask_socketio import SocketIO, send, emit
-from flask_session import Session
 
 sid_dict = {}
 app = Flask(__name__)
@@ -18,18 +16,10 @@ def root():
     return app.send_static_file("client.html"), 200
 
 @socketio.on("connection")
-def handleConnection(data):
-    data = json.loads(data)
-
-    if data["email"] in sid_dict:
-        socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])  
-    sid_dict[data["email"]] = request.sid
+def handleConnection(token):
+    email = database_helper.get_user_data_by_token(token)["data"]["email"]
+    sid_dict[email] = request.sid
   
-
-@socketio.on('disconnect')
-def handleDisconnection(data):
-    data = json.loads(data)
-    print("Disconnected from socket", data['email'])
             
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
@@ -46,6 +36,10 @@ def sign_in():
                 token += letters[math.floor(random.random() * len(letters))]
             
             database_helper.add_token(param['email'], token)
+
+            if data["email"] in sid_dict:
+                socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])
+                del sid_dict[data["email"]]
             
             return {"success": True, "message": "Successfully signed in.", "data": token}, 201
             
