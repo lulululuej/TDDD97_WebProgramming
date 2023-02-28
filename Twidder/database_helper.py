@@ -10,10 +10,20 @@ def get_db():
     if db is None:
         try:
             db = sqlite3.connect(DATABASE_URI)
-            #print("Connection to SQLite DB successful")
+            
         except Error as e:
             print(f"The error '{e}' occurred")
     return db
+
+def get_reg_amount():
+    db = get_db()
+    cursor = db.execute("select count(*) from user")
+    count = cursor.fetchone()
+    cursor.close()
+    if count:
+        return  {'success': True, 'data': count[0]}
+    else:
+        return {'success': False, 'message': "Could not fectch registered user amount"}
 
 def get_user(email):
     db = get_db()

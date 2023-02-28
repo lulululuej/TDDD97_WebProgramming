@@ -7,9 +7,8 @@ from flask_socketio import SocketIO, send, emit
 
 sid_dict = {}
 app = Flask(__name__)
-app.config['SESSION_TYPE'] = 'filesystem'
 socketio = SocketIO(app, manage_session=False)
-Session(app)
+
 
 @app.route("/", methods = ['GET'])
 def root():
@@ -17,8 +16,22 @@ def root():
 
 @socketio.on("connection")
 def handleConnection(token):
-    email = database_helper.get_user_data_by_token(token)["data"]["email"]
-    sid_dict[email] = request.sid
+    resp = database_helper.get_user_data_by_token(token)
+    if resp["success"]:
+        print("here pls")
+        email = resp["data"]["email"]
+        sid_dict[email] = request.sid
+        handle_update()
+    else:
+        print(resp)
+
+@socketio.on('message')
+def handle_update():
+    reg_users = database_helper.get_reg_amount()
+    print(reg_users)
+    if reg_users["success"]:
+        message = "amount of logged in users: " + str(len(sid_dict)) + "\n amount of registered users:" + str(reg_users["data"])
+        socketio.emit('userUpdate', message, broadcast=True)
   
             
 @app.route("/sign_in/", methods = ['POST'])
@@ -40,6 +53,7 @@ def sign_in():
             if data["email"] in sid_dict:
                 socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])
                 del sid_dict[data["email"]]
+                
             
             return {"success": True, "message": "Successfully signed in.", "data": token}, 201
             
@@ -60,6 +74,7 @@ def sign_up():
     if(data['email'] and data['password'] and data['firstname'] and data['familyname'] and data['gender'] and data['city'] and data['country']):
         res = database_helper.create_user(data['email'], data['password'], data['firstname'], data['familyname'], data['gender'], data['city'], data['country'])
         if res:
+            handle_update()
             return {"success": True, "message": "Successfully created a new user."}, 201
         else:
             return {"success": False, "message": "User already exists."}, 409
@@ -72,9 +87,11 @@ def sign_out():
     token = request.headers.get('Authorization')
     user_data = database_helper.get_user_data_by_token(token)
     res = database_helper.delete_token(token)
-    del sid_dict[user_data["data"]["email"]]
+    if user_data["success"]:
+        del sid_dict[user_data["data"]["email"]]
     
     if res['success']:
+        handle_update()
         return res, 204
     else:
         return res, 401

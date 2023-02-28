@@ -1,4 +1,5 @@
 
+// var socket = null;
 
 /* Displayes a view */
 displayView = function(view) {
@@ -98,7 +99,6 @@ signUp = function() {
           signin_req.open("POST", "/sign_in/", true);
           signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
           signin_req.send(JSON.stringify(signin_data));
-
           signin_req.onreadystatechange =  function(){
             if (signin_req.readyState == 4){
                 if (signin_req.status == 201){
@@ -106,10 +106,9 @@ signUp = function() {
                     localStorage.setItem("token", token);
                     console.log("signup: ", localStorage.getItem("token"));
                     displayView("profile", token);
-                    let socket = io.connect();
-                    socket.on('connect', function() {
-                      socket.emit('connection', JSON.stringify({"email": email, "token": token}));
-                    });      
+                    
+                      
+                    handleSocket();    
                 }else {
                   const inputEmail = window.document.getElementById("email-input");
                   let resp = JSON.parse(signin_req.responseText);
@@ -132,6 +131,23 @@ signUp = function() {
   }
 }
 
+handleSocket = function() {
+  let socket = io.connect()
+  socket.on('connect', function() {
+    socket.emit('connection', token);
+  });
+  socket.on('discontinue', (sres) => {
+    console.log(sres['message'])
+    localStorage.removeItem("token");
+    window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
+  })
+  socket.on('userUpdate', function(msg) {
+    console.log('Received message: ', msg);
+  });
+
+  
+}
+
 signIn = function() {
   validateEmail("Sign In");
   let username = document.getElementById("login-email").value;
@@ -141,7 +157,6 @@ signIn = function() {
   let signin_req = new XMLHttpRequest();
   signin_req.open("POST", "/sign_in/", true);
   signin_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-  signin_req.send(JSON.stringify(signin_data));
 
   signin_req.onreadystatechange =  function(){
     if (signin_req.readyState == 4){
@@ -149,7 +164,10 @@ signIn = function() {
             let token = JSON.parse(signin_req.responseText)['data'];
             localStorage.setItem("token", token);
             displayView("profile", token);
-            let socket = io.connect();
+            
+            handleSocket();
+            
+            /*
             socket.on('connect', function() {
               socket.emit('connection', token);
             });
@@ -158,6 +176,9 @@ signIn = function() {
               localStorage.removeItem("token");
               window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
             })
+            socket.on('userUpdate', function(msg) {
+              console.log('Received message: ', msg);
+          });*/
             
 
         }else {
@@ -172,6 +193,7 @@ signIn = function() {
     }
 
   }
+  signin_req.send(JSON.stringify(signin_data));
 }
 
 signOut = function() {
@@ -179,7 +201,6 @@ signOut = function() {
   signout_req.open("PATCH", "/sign_out/", true);
   signout_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   signout_req.setRequestHeader("Authorization", localStorage.getItem("token"));
-  signout_req.send();
 
   signout_req.onreadystatechange =  function(){
     if (signout_req.readyState == 4){
@@ -195,6 +216,7 @@ signOut = function() {
     }
 
   }
+  signout_req.send();
 }
  
 showPanel = function(panelName) {
@@ -223,8 +245,6 @@ populateInformation = function() {
   getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getdata_req.setRequestHeader("Authorization", token);
 
-  getdata_req.send();
-
   getdata_req.onreadystatechange =  function(){
     if (getdata_req.readyState == 4){
       if (getdata_req.status == 200) {
@@ -242,6 +262,7 @@ populateInformation = function() {
       }
     }
   }
+  getdata_req.send();
 }
 
 changeActPassword = function() {
@@ -266,8 +287,6 @@ changeActPassword = function() {
   changepw_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   changepw_req.setRequestHeader("Authorization", token);
 
-  changepw_req.send(JSON.stringify(pw_data));
-
   changepw_req.onreadystatechange =  function(){
     if (changepw_req.readyState == 4){
       if (changepw_req.status == 201) {
@@ -283,6 +302,7 @@ changeActPassword = function() {
       }
     }
   }
+  changepw_req.send(JSON.stringify(pw_data));
 }
 
 updateWall = function() {
@@ -291,8 +311,6 @@ updateWall = function() {
   getmessages_req.open("GET", "/get_user_messages_by_token/", true);
   getmessages_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getmessages_req.setRequestHeader("Authorization", token);
-
-  getmessages_req.send();
 
   getmessages_req.onreadystatechange =  function(){
     if (getmessages_req.readyState == 4){
@@ -323,6 +341,7 @@ updateWall = function() {
 
     }
   }
+  getmessages_req.send();
 }
 
 postMessage = function() {
@@ -338,8 +357,6 @@ postMessage = function() {
   getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getdata_req.setRequestHeader("Authorization", token);
 
-  getdata_req.send();
-
   getdata_req.onreadystatechange =  function(){
     if (getdata_req.readyState == 4){
       if (getdata_req.status == 200) {
@@ -351,7 +368,6 @@ postMessage = function() {
         postmessage_req.open("POST", "/post_message/", true);
         postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         postmessage_req.setRequestHeader("Authorization", token);
-        postmessage_req.send(JSON.stringify(data));
 
         postmessage_req.onreadystatechange =  function(){
           if (postmessage_req.readyState == 4){
@@ -365,12 +381,14 @@ postMessage = function() {
             }
           }
         }
+        postmessage_req.send(JSON.stringify(data));
       } else {
         let resp = JSON.parse(getdata_req.responseText);
         console.log(resp['message']);
       }
     }
   }
+  getdata_req.send();
 }
 
 getUserInformation = function() {
@@ -381,8 +399,6 @@ getUserInformation = function() {
   getdata_req.open("GET", "/get_user_data_by_email/" + email, true);
   getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getdata_req.setRequestHeader("Authorization", token);
-
-  getdata_req.send();
 
   getdata_req.onreadystatechange =  function(){
     if (getdata_req.readyState == 4){
@@ -405,6 +421,7 @@ getUserInformation = function() {
       }
     }
   }
+  getdata_req.send();
 }
 
 updateUserWall = function() {
@@ -415,8 +432,6 @@ updateUserWall = function() {
   getmessages_req.open("GET", "/get_user_messages_by_email/" + email, true);
   getmessages_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getmessages_req.setRequestHeader("Authorization", token);
-
-  getmessages_req.send();
 
   getmessages_req.onreadystatechange =  function(){
     if (getmessages_req.readyState == 4){
@@ -448,6 +463,7 @@ updateUserWall = function() {
 
     }
   }
+  getmessages_req.send();
 }
 
 sendMessage = function() {
@@ -460,7 +476,6 @@ sendMessage = function() {
   postmessage_req.open("POST", "/post_message/", true);
   postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   postmessage_req.setRequestHeader("Authorization", token);
-  postmessage_req.send(JSON.stringify(data));
 
   postmessage_req.onreadystatechange =  function(){
     if (postmessage_req.readyState == 4){
@@ -474,4 +489,5 @@ sendMessage = function() {
       }
     }
   }
+  postmessage_req.send(JSON.stringify(data));
 }
