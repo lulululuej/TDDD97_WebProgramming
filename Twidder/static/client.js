@@ -350,21 +350,31 @@ updateWall = function() {
       if (getmessages_req.status == 200) {
         let resp = JSON.parse(getmessages_req.responseText);
         let messages = resp['data'];
+        console.log(messages);
         let messageList = document.getElementById("user-wall-container");
         messageList.innerHTML = '';
         let i =0;
         for(const obj of messages) {
           let msg = obj.content;
           let sender = obj.writer;
-          messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p id="user-id-'+i+'">'+ sender +': '+'</p><p id="user-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+msg+'</p></div>';
+          let location = obj.location;
+          messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p id="user-id-'+i+'">'+ sender +': '+'</p><p id="user-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+msg+'</p><div id="loc-div-'+i+'"><p id="user-location-'+i+'">'+location+'</p></div></div>';
           let id = "wall-msg-container"+i;
-      
+          let locationid = "loc-div-"+i;
+          let textid = "user-location-"+i;
           document.getElementById(id).style.height = 'fit-content(6em)';
           document.getElementById(id).style.border = '1px solid black';
           document.getElementById(id).style.marginBottom = '10px';
           document.getElementById(id).style.backgroundColor = 'white';
           document.getElementById(id).style.borderRadius = '5px';
           document.getElementById(id).style.padding = "10px 10px 10px 10px";
+          document.getElementById(textid).style.color = "grey";
+          //document.getElementById(locationid).style.alignSelf = "end";
+          //document.getElementById(locationid).style.marginRight = "20px";
+          //document.getElementById(locationid).style.width = "fit-content";
+          //document.getElementById(locationid).style.float = "right";
+          //document.getElementById(locationid).style.textAlign = "right";
+          /*document.getElementById(locationid).style.paddingRight = "0";*/
           i++;
         }
       } else {
@@ -396,10 +406,10 @@ postMessage = async function() {
       if (getdata_req.status == 200) {
         let resp = JSON.parse(getdata_req.responseText);
         let email = resp['data'].email;
-        let country = await getLocation();
-        let data = {"message": msg, "email": email, "country": country}
+        let location = await getLocation();
+        let data = {"message": msg, "email": email, "location": location}
         console.log(data);
-        /*let postmessage_req = new XMLHttpRequest();
+        let postmessage_req = new XMLHttpRequest();
         postmessage_req.open("POST", "/post_message/", true);
         postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         postmessage_req.setRequestHeader("Authorization", token);
@@ -416,7 +426,7 @@ postMessage = async function() {
             }
           }
         }
-        postmessage_req.send(JSON.stringify(data));*/
+        postmessage_req.send(JSON.stringify(data));
       } else {
         let resp = JSON.parse(getdata_req.responseText);
         console.log(resp['message']);
@@ -554,9 +564,10 @@ const getLocation = async () => {
         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=`+latitude+`&lon=`+longitude)
           .then((response) => response.json())
           .then((data) => {
-            country = data.address.country
-            console.log(country);
-            resolve(country);
+            let location = data.address.city;
+            location += ' ';
+            location += data.address.country_code;
+            resolve(location);
           });
       });
     } else { 
@@ -564,11 +575,3 @@ const getLocation = async () => {
     }
   });
 }
-
-const getName = async () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve('xxx');
-    }, 1000)
-  })
-};

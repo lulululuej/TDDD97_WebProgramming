@@ -124,7 +124,7 @@ def get_user_data_by_email(token, email):
         result = {'email': match[0][0], 'password': match[0][1], 'firstname': match[0][2], 'familyname': match[0][3], 'gender': match[0][4], 'city': match[0][5], 'country': match[0][6]}
         return {'success': True, "message": "User data retrieved.", "data": result}
 
-def post_messsage(token, message, email, country):
+def post_messsage(token, message, email, location):
     db = get_db()
     # see if this token exist or not
     cursor = db.execute("select email from user where token = (?);", [token])
@@ -138,7 +138,7 @@ def post_messsage(token, message, email, country):
         if not match:
             return {"success": False, "message": "No such user."}
         # insert msg
-        db.execute("insert into message (writer, email, content, country) values (?, ?, ?, ?);", (writer[0], email, message, country))
+        db.execute("insert into message (writer, email, content, location) values (?, ?, ?, ?);", (writer[0], email, message, location))
         db.commit()
         db.close()
         return {"success": True, "message": "Message posted"}
@@ -155,10 +155,10 @@ def get_user_messages_by_email(token, email):
         match = cursor.fetchall()
         if not match:
             return {"success": False, "message": "No such user."}
-        cursor = db.execute("select writer, content from message where email = (?);", [email])
+        cursor = db.execute("select writer, content, location from message where email = (?);", [email])
         message = []
         for msg in cursor:
-            message.append({"writer":msg[0], "content": msg[1]})
+            message.append({"writer":msg[0], "content": msg[1], "location": msg[2]})
         return {"success": True, "message": "User messages retrieved.", "data": message}
 
 def get_user_messages_by_token(token):

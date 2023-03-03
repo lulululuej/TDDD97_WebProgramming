@@ -154,10 +154,10 @@ def get_user_messages_by_email(email):
 @app.route("/post_message/", methods = ['POST'])
 def post_message():
     data = request.get_json()
-    if ('message' not in data or 'email' not in data or 'country' not in data):
+    if ('message' not in data or 'email' not in data or 'location' not in data):
         return {"success": False, "message": "Invalid field format."}, 422
     token = request.headers.get('Authorization')
-    res = database_helper.post_messsage(token, data['message'], data['email'], data['country'])
+    res = database_helper.post_messsage(token, data['message'], data['email'], data['location'])
 
     if res['success']:
         return res, 201
