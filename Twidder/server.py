@@ -18,7 +18,6 @@ def root():
 def handleConnection(token):
     resp = database_helper.get_user_data_by_token(token)
     if resp["success"]:
-        print("here pls")
         email = resp["data"]["email"]
         sid_dict[email] = request.sid
         handle_update()
@@ -28,9 +27,9 @@ def handleConnection(token):
 @socketio.on('message')
 def handle_update():
     reg_users = database_helper.get_reg_amount()
-    print(reg_users)
+    #print(reg_users)
     if reg_users["success"]:
-        message = "amount of logged in users: " + str(len(sid_dict)) + "\n amount of registered users:" + str(reg_users["data"])
+        message = {"loggedinUser": len(sid_dict), "registeredUser": reg_users["data"]}
         socketio.emit('userUpdate', message, broadcast=True)
   
             
@@ -155,10 +154,10 @@ def get_user_messages_by_email(email):
 @app.route("/post_message/", methods = ['POST'])
 def post_message():
     data = request.get_json()
-    if ('message' not in data or 'email' not in data):
+    if ('message' not in data or 'email' not in data or 'country' not in data):
         return {"success": False, "message": "Invalid field format."}, 422
     token = request.headers.get('Authorization')
-    res = database_helper.post_messsage(token, data['message'], data['email'])
+    res = database_helper.post_messsage(token, data['message'], data['email'], data['country'])
 
     if res['success']:
         return res, 201

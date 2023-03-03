@@ -13,4 +13,5 @@ create table message(
     writer varchar(120) NOT NULL, 
     email varchar(20) NOT NULL, 
     content varchar(120) NOT NULL, 
+    country varchar(20) NULL,
     id INTEGER PRIMARY KEY);

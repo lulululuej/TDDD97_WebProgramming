@@ -141,11 +141,36 @@ handleSocket = function() {
     localStorage.removeItem("token");
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
   })
-  socket.on('userUpdate', function(msg) {
+  socket.on('userUpdate', (msg) => {
     console.log('Received message: ', msg);
+    logginRegisterRatio = []
+    logginRegisterRatio.push(['# of Online User', msg['loggedinUser']]);
+    logginRegisterRatio.push(['# of Registered User', msg['registeredUser']]);
+    donutChart('#logginRegisterRatio', logginRegisterRatio, '# of onlineUser and RegisteredUser');
   });
+}
 
-  
+function donutChart(id, data, title) {
+  c3.generate({
+    bindto: id,
+    data: {
+        columns: data,
+        type : 'donut',
+        onclick: function (d, i) { console.log("onclick", d, i); },
+        onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+        onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    donut: {
+        title: title
+    },
+    tooltip: {
+        format: {
+            value: function (d) {
+                return d + ' count';
+            },
+        }
+    }
+  });
 }
 
 signIn = function() {
@@ -225,16 +250,24 @@ showPanel = function(panelName) {
     document.getElementById("home-panel").style.display = "inline-flex";
     document.getElementById("browse-panel").style.display = "none";
     document.getElementById("account-panel").style.display = "none";
+    document.getElementById("funstuff-panel").style.display = "none";
     updateWall();
     populateInformation();
   } else if (panelName == 'browsePanel') {
     document.getElementById("home-panel").style.display = "none";
     document.getElementById("browse-panel").style.display = "block";
     document.getElementById("account-panel").style.display = "none";
+    document.getElementById("funstuff-panel").style.display = "none";
   } else if (panelName == 'accountPanel') {
     document.getElementById("home-panel").style.display = "none";
     document.getElementById("browse-panel").style.display = "none";
     document.getElementById("account-panel").style.display = "block";
+    document.getElementById("funstuff-panel").style.display = "none";
+  } else if (panelName == 'funstuffPanel') {
+    document.getElementById("home-panel").style.display = "none";
+    document.getElementById("browse-panel").style.display = "none";
+    document.getElementById("account-panel").style.display = "none";
+    document.getElementById("funstuff-panel").style.display = "block";
   }
 }
 
@@ -323,7 +356,7 @@ updateWall = function() {
         for(const obj of messages) {
           let msg = obj.content;
           let sender = obj.writer;
-          messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
+          messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p id="user-id-'+i+'">'+ sender +': '+'</p><p id="user-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+msg+'</p></div>';
           let id = "wall-msg-container"+i;
       
           document.getElementById(id).style.height = 'fit-content(6em)';
@@ -344,7 +377,7 @@ updateWall = function() {
   getmessages_req.send();
 }
 
-postMessage = function() {
+postMessage = async function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('user-text-box').value;
  
@@ -352,19 +385,21 @@ postMessage = function() {
     document.getElementById('user-text-box').value = "No empty message!!!";
     return;
   }
+  
   let getdata_req = new XMLHttpRequest();
   getdata_req.open("GET", "/get_user_data_by_token/", true);
   getdata_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
   getdata_req.setRequestHeader("Authorization", token);
 
-  getdata_req.onreadystatechange =  function(){
+  getdata_req.onreadystatechange = async function(){
     if (getdata_req.readyState == 4){
       if (getdata_req.status == 200) {
         let resp = JSON.parse(getdata_req.responseText);
         let email = resp['data'].email;
-
-        let data = {"message": msg, "email": email}
-        let postmessage_req = new XMLHttpRequest();
+        let country = await getLocation();
+        let data = {"message": msg, "email": email, "country": country}
+        console.log(data);
+        /*let postmessage_req = new XMLHttpRequest();
         postmessage_req.open("POST", "/post_message/", true);
         postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         postmessage_req.setRequestHeader("Authorization", token);
@@ -381,7 +416,7 @@ postMessage = function() {
             }
           }
         }
-        postmessage_req.send(JSON.stringify(data));
+        postmessage_req.send(JSON.stringify(data));*/
       } else {
         let resp = JSON.parse(getdata_req.responseText);
         console.log(resp['message']);
@@ -445,7 +480,7 @@ updateUserWall = function() {
           let msg = obj.content;
           console.log(obj);
           let sender = obj.writer;
-          messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p>'+ sender + ': ' + msg+'</p></div>';
+          messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p id="friend-id-'+i+'">'+ sender + ': ' + '</p><p id="friend-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+ msg +'</p></div>';
           let id = "friend-wall-msg-container"+i;
        
           document.getElementById(id).style.height = 'fit-content(6em)';
@@ -491,3 +526,49 @@ sendMessage = function() {
   }
   postmessage_req.send(JSON.stringify(data));
 }
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+  //console.log(document.getElementById(data).innerHTML);
+  //console.log(ev.target);
+  ev.target.value = document.getElementById(data).innerHTML;
+}
+
+const getLocation = async () => {
+  //let country = '';
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        let latitude = JSON.stringify(position.coords.latitude);
+        let longitude = JSON.stringify(position.coords.longitude);
+        console.log(latitude,longitude);
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=`+latitude+`&lon=`+longitude)
+          .then((response) => response.json())
+          .then((data) => {
+            country = data.address.country
+            console.log(country);
+            resolve(country);
+          });
+      });
+    } else { 
+      console.log("Geolocation is not supported by this browser.");
+    }
+  });
+}
+
+const getName = async () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('xxx');
+    }, 1000)
+  })
+};

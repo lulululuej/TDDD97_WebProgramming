@@ -10,6 +10,9 @@
         <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow" rel="stylesheet">
         <script src="/static/client.js"></script>
         <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+        <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.18/c3.css'>
+        <script src='http://d3js.org/d3.v5.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.18/c3.js'></script>
         <script id="welcomeview" type="text/view">
             <div id="main">
                 <div id="logo-img">
@@ -80,11 +83,13 @@
         </script>
         <script id="profileview">
             <div id="profile-container">
+                <p id="demo">demo</p>
+                <button id="demo_btn" onclick="getLocation()">Try it</button>
                 <div id="tab">
                     <button class="tab-button" id="home-tab" onclick="showPanel('homePanel')">Home</button>
                     <button class="tab-button" onclick="showPanel('browsePanel')">Browse</button>
                     <button class="tab-button" id="account-tab" onclick="showPanel('accountPanel')">Account</button>
-                    <button class="tab-button" id="fun-tab" onclick="">Fun Stuff</button>
+                    <button class="tab-button" id="fun-tab" onclick="showPanel('funstuffPanel')">Fun Stuff</button>
                 </div>
                 <div id="panel-div">
                     <div id="home-panel" class="panel">
@@ -103,8 +108,8 @@
                         <div class="message" id="user-message">
                             <div id="user-post-container">
                                 <h1>Post a message to your wall</h1> 
-                                <textarea class="user-message-input" id="user-text-box" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
-                                <button class="user-message-input" id="user-post-btn" onclick="postMessage()">Post</button>   
+                                <textarea class="user-message-input" id="user-text-box" ondrop="drop(event)" ondragover="allowDrop(event)" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
+                                <button class="user-message-input" id="user-post-btn" onclick="postMessage()">Post</button>
                             </div> 
                             <div class="user-wall" id="user-wall-container">
                                 
@@ -135,8 +140,8 @@
                             <div class="message" id="user-message">
                                 <div id="user-post-container">
                                     <h1>Post a message to your friend</h1> 
-                                    <textarea class="user-message-input" id="friend-text-box" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
-                                    <button class="user-message-input" id="friend-post-btn" onclick="sendMessage()">Send</button>   
+                                    <textarea class="user-message-input" id="friend-text-box" ondrop="drop(event)" ondragover="allowDrop(event)" rows="4" cols="25" name="comment" form="usrform">Enter text here...</textarea>
+                                    <button class="user-message-input" id="friend-post-btn" onclick="sendMessage()">Send</button>
                                 </div> 
                                 <div class="user-wall" id="friend-wall-container">
                                     
@@ -156,6 +161,9 @@
                             <button class="change-password" id="change-password-check" onclick="changeActPassword()">OK</button>
                         </div>
                         <button id="signout-button" onclick="signOut()">SignOut</button> 
+                    </div>
+                    <div id="funstuff-panel" class="panel">
+                        <div id="logginRegisterRatio">hejhej</div>
                     </div>
                 </div>
             </div>
