@@ -218,9 +218,6 @@ li {
 #firstname-text {
     margin-top: 0px;
 }
-#bg {
-
-}
 #container {
     position: relative;
 }
@@ -326,4 +323,43 @@ h1 {
     width: 100px;
     height: 30px;
     margin-top: 10px;
+}
+
+@media only screen and (device-width: 820px){
+    #main {
+        flex-direction: column;
+    }
+    #logo-img {
+        width: 680px;
+        height: auto;
+        margin: auto;
+    }
+    #twidder-img {
+        width: 680px;
+    }
+    #login-signup-container {
+        width: 680px;
+        height: auto;
+    }
+    #login {
+        width: 100%
+    }
+    #signup {
+        width: 100%;
+    }
+    #home-panel {
+        flex-direction: column;
+    }
+    #user-information {
+        width: 100%;
+        align-self: center;
+    }
+    .list-group {
+        width: 60%;
+        margin: auto;
+        margin-top: 10px;
+    }
+    #user-message {
+        align-self: center;
+    }
 }
