@@ -148,20 +148,27 @@ handleSocket = function() {
     logginRegisterRatio.push(['# of Registered User', msg['registeredUser']]);
     donutChart('#logginRegisterRatio', logginRegisterRatio, '# of onlineUser and RegisteredUser');
   });
+  socket.on('messageUpdate', (msg) => {
+    console.log('Received message: ', msg);
+  });
 }
 
 function donutChart(id, data, title) {
   c3.generate({
     bindto: id,
+    size: {
+      height: 500,
+      width: 500
+    },
+    padding: {
+      left: 200
+    },
     data: {
         columns: data,
         type : 'donut',
         onclick: function (d, i) { console.log("onclick", d, i); },
         onmouseover: function (d, i) { console.log("onmouseover", d, i); },
         onmouseout: function (d, i) { console.log("onmouseout", d, i); }
-    },
-    donut: {
-        title: title
     },
     tooltip: {
         format: {
@@ -360,7 +367,6 @@ updateWall = function() {
           let location = obj.location;
           messageList.innerHTML += '<div id="wall-msg-container'+i+'"><p id="user-id-'+i+'">'+ sender +': '+'</p><p id="user-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+msg+'</p><div id="loc-div-'+i+'"><p id="user-location-'+i+'">'+location+'</p></div></div>';
           let id = "wall-msg-container"+i;
-          let locationid = "loc-div-"+i;
           let textid = "user-location-"+i;
           document.getElementById(id).style.height = 'fit-content(6em)';
           document.getElementById(id).style.border = '1px solid black';
@@ -369,12 +375,6 @@ updateWall = function() {
           document.getElementById(id).style.borderRadius = '5px';
           document.getElementById(id).style.padding = "10px 10px 10px 10px";
           document.getElementById(textid).style.color = "grey";
-          //document.getElementById(locationid).style.alignSelf = "end";
-          //document.getElementById(locationid).style.marginRight = "20px";
-          //document.getElementById(locationid).style.width = "fit-content";
-          //document.getElementById(locationid).style.float = "right";
-          //document.getElementById(locationid).style.textAlign = "right";
-          /*document.getElementById(locationid).style.paddingRight = "0";*/
           i++;
         }
       } else {
@@ -490,15 +490,17 @@ updateUserWall = function() {
           let msg = obj.content;
           console.log(obj);
           let sender = obj.writer;
-          messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p id="friend-id-'+i+'">'+ sender + ': ' + '</p><p id="friend-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+ msg +'</p></div>';
+          let location = obj.location;
+          messageList.innerHTML += '<div id="friend-wall-msg-container'+i+'"><p id="friend-id-'+i+'">'+ sender + ': ' + '</p><p id="friend-msg-'+i+'" draggable="true" ondragstart="drag(event)" >'+ msg +'</p><div id="friend-loc-div-'+i+'"><p id="friend-location-'+i+'">'+location+'</p></div></div>';
           let id = "friend-wall-msg-container"+i;
-       
+          let textid = "friend-location-"+i;
           document.getElementById(id).style.height = 'fit-content(6em)';
           document.getElementById(id).style.border = '1px solid black';
           document.getElementById(id).style.marginBottom = '10px';
           document.getElementById(id).style.backgroundColor = 'white';
           document.getElementById(id).style.borderRadius = '5px';
           document.getElementById(id).style.padding = "10px 10px 10px 10px";
+          document.getElementById(textid).style.color = "grey";
           i++;
         }
       } else {
@@ -511,12 +513,12 @@ updateUserWall = function() {
   getmessages_req.send();
 }
 
-sendMessage = function() {
+sendMessage = async function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('friend-text-box').value;
   let email = document.getElementById("friend-email-text").innerText;
-
-  let data = {"message": msg, "email": email};
+  let location = await getLocation();
+  let data = {"message": msg, "email": email, "location": location};
   let postmessage_req = new XMLHttpRequest();
   postmessage_req.open("POST", "/post_message/", true);
   postmessage_req.setRequestHeader("Content-type", "application/json;charset=UTF-8");

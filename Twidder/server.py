@@ -31,7 +31,14 @@ def handle_update():
     if reg_users["success"]:
         message = {"loggedinUser": len(sid_dict), "registeredUser": reg_users["data"]}
         socketio.emit('userUpdate', message, broadcast=True)
-  
+
+@socketio.on('message_amount')
+def handle_message_count(email):
+    count = database_helper.get_message_count(email)
+    if count["success"]:
+        message = {"messageCount": count['data']}
+        print(message)
+        socketio.emit('messageUpdate', message, to=sid_dict[email])
             
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
@@ -158,7 +165,7 @@ def post_message():
         return {"success": False, "message": "Invalid field format."}, 422
     token = request.headers.get('Authorization')
     res = database_helper.post_messsage(token, data['message'], data['email'], data['location'])
-
+    handle_message_count(data['email'])
     if res['success']:
         return res, 201
     else:

@@ -171,6 +171,15 @@ def get_user_messages_by_token(token):
     else:
         return get_user_messages_by_email(token, email[0])
 
+def get_message_count(email):
+    db = get_db()
+    cursor = db.execute("select count(id) from message where email = (?);", [email])
+    count = cursor.fetchone()
+    if count:
+        return  {'success': True, 'data': count[0]}
+    else:
+        return {'success': False, 'message': "Could not fectch message amount"}
+
 def disconnect():
     db = getattr(g, 'db', None)
     if db is not None:

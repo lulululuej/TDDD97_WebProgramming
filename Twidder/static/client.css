@@ -324,8 +324,18 @@ h1 {
     height: 30px;
     margin-top: 10px;
 }
-
+#logginRegisterRatio {
+    width: fit-content;
+    margin: auto;
+}
+#funstuff-panel {
+    width: 100%;
+}
+#signin-text {
+    display: none;
+}
 @media only screen and (device-width: 820px){
+    /* loginPage */
     #main {
         flex-direction: column;
     }
@@ -347,10 +357,18 @@ h1 {
     #signup {
         width: 100%;
     }
+    /* homePanel */
     #home-panel {
         flex-direction: column;
     }
+    #user-container {
+        flex-direction: column;
+    }
     #user-information {
+        width: 100%;
+        align-self: center;
+    }
+    #friend-information {
         width: 100%;
         align-self: center;
     }
@@ -361,5 +379,147 @@ h1 {
     }
     #user-message {
         align-self: center;
+    }
+    #update-btn {
+        align-self: center;
+        margin-top: 50px;
+    }
+    #update-user-btn {
+        align-self: center;
+        margin-top: 50px;
+    }
+    h1 {
+        font-size: 60px;
+    }
+    #search-user-input {
+        width: 40%;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+    #search-user-button {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    #account-panel {
+        width: 100%;
+    }
+    #change-password-text {
+        width: 100%;
+        text-align: center;
+    }
+    #change-password-container {
+        align-items: center;
+    }
+    .change-password-input {
+        width: 30%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    #signout-button {
+        width: fit-content;
+        margin-left: 48%;
+        padding: 10px;
+    }
+    #logginRegisterRatio {
+        margin-top: 45%;
+    }
+}
+@media only screen and (device-width: 390px){
+    /* loginPage */
+    #logo-img {
+        display: none;
+    }
+    #signin-text {
+        display: block;
+    }
+    h1, #sign-text {
+        font-size: 60px;
+    }
+    label {
+        font-size: 20px;
+        margin-left: 15px;
+    }
+    #main {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+    }
+    #twidder-img {
+        width: 680px;
+    }
+    #login-signup-container {
+        width: 680px;
+        height: auto;
+        align-self: center;
+    }
+    #login {
+        width: 100%
+    }
+    #signup {
+        width: 100%;
+        margin-top: 20px;
+    }
+    /* homePanel */
+    #home-panel {
+        flex-direction: column;
+    }
+    #user-container {
+        flex-direction: column;
+    }
+    #user-information {
+        width: 100%;
+        align-self: center;
+    }
+    #friend-information {
+        width: 100%;
+        align-self: center;
+    }
+    .list-group {
+        width: 60%;
+        margin: auto;
+        margin-top: 10px;
+    }
+    #user-message {
+        align-self: center;
+    }
+    #update-btn {
+        align-self: center;
+        margin-top: 50px;
+    }
+    #update-user-btn {
+        align-self: center;
+        margin-top: 50px;
+    }
+    #search-user-input {
+        width: 40%;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+    #search-user-button {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    #account-panel {
+        width: 100%;
+    }
+    #change-password-text {
+        width: 100%;
+        text-align: center;
+    }
+    #change-password-container {
+        align-items: center;
+    }
+    .change-password-input {
+        width: 30%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    #signout-button {
+        width: fit-content;
+        margin-left: 48%;
+        padding: 10px;
+    }
+    #logginRegisterRatio {
+        margin-top: 45%;
     }
 }
