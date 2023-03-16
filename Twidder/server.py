@@ -14,6 +14,10 @@ socketio = SocketIO(app, manage_session=False)
 def root():
     return app.send_static_file("client.html"), 200
 
+"""
+Input: token
+Output (through socket): -
+"""
 @socketio.on("connection")
 def handleConnection(token):
     resp = database_helper.get_user_data_by_token(token)
@@ -25,14 +29,20 @@ def handleConnection(token):
     else:
         print(resp)
 
+"""
+Input: -
+Output (through socket): amount of registered users (Integer) & logged in users (Integer)
+"""
 @socketio.on('message')
 def handle_update():
     reg_users = database_helper.get_reg_amount()
-    #print(reg_users)
     if reg_users["success"]:
         message = {"loggedinUser": len(sid_dict), "registeredUser": reg_users["data"]}
         socketio.emit('userUpdate', message, broadcast=True)
-
+"""
+Input:  email (String)
+Output (through socket): amount of messages (Integer) 
+"""
 @socketio.on('message_amount')
 def handle_message_count(email):
     count = database_helper.get_message_count(email)
@@ -40,7 +50,14 @@ def handle_message_count(email):
         message = {"messageCount": count['data']}
         print(message)
         socketio.emit('messageUpdate', message, to=sid_dict[email])
-            
+
+"""
+Input:  email (String)
+        password (String)
+Output: success (Boolean)
+        message (String)
+        token (String)
+"""
 @app.route("/sign_in/", methods = ['POST'])
 def sign_in():
     param = request.get_json()
@@ -68,6 +85,17 @@ def sign_in():
         print(res['message'])
         return res, 403
 
+"""
+Input:  email (String)
+        password (String)
+        first name (String)
+        family name (String)
+        gender (String)
+        city (String)
+        country (String)
+Output: success (Boolean)
+        message (String)
+"""
 @app.route("/sign_up/", methods = ['POST'])
 def sign_up():
     data = request.get_json()
@@ -86,7 +114,11 @@ def sign_up():
     else:
         return {"success": False, "message": "Form data missing or incorrect type."}, 400
     
-
+"""
+Input:  token (String)
+Output: success (Boolean)
+        message (String)
+"""
 @app.route("/sign_out/", methods = ['PATCH'])
 def sign_out():
     token = request.headers.get('Authorization')
@@ -101,8 +133,13 @@ def sign_out():
     else:
         return res, 401
 
-    
-
+"""
+Input:  old password (String)
+        new password (String)
+        token (String)
+Output: success (Boolean)
+        message (String)
+"""
 @app.route("/change_password/", methods=['POST'])
 def change_password():
     data = request.get_json()
@@ -115,6 +152,18 @@ def change_password():
     else:
         return res, 401
 
+"""
+Input:  token (String)
+Output: success (Boolean)
+        message (String)
+        email (String)
+        password (String)
+        first name (String)
+        family name (String)
+        gender (String)
+        city (String)
+        country (String)
+"""
 @app.route("/get_user_data_by_token/", methods = ['GET'])
 def get_user_data_by_token():
     token = request.headers.get('Authorization')
@@ -125,6 +174,19 @@ def get_user_data_by_token():
     else:
         return res, 401
 
+"""
+Input:  email (String)
+        token (String)
+Output: success (Boolean)
+        message (String)
+        email (String)
+        password (String)
+        first name (String)
+        family name (String)
+        gender (String)
+        city (String)
+        country (String)
+"""
 @app.route("/get_user_data_by_email/<email>", methods = ['GET'])
 def get_user_data_by_email(email):
     token = request.headers.get('Authorization')
@@ -134,8 +196,12 @@ def get_user_data_by_email(email):
         return res, 200
     else:
         return res, 401
-
-
+"""
+Input:  token (String)
+Output: success (Boolean)
+        message (String)
+        user messages (List)
+"""
 @app.route("/get_user_messages_by_token/", methods = ['GET'])
 def get_user_messages_by_token():
     token = request.headers.get('Authorization')
@@ -146,7 +212,13 @@ def get_user_messages_by_token():
     else:
         return res, 401
 
-
+"""
+Input:  email (String)
+        token (String)
+Output: success (Boolean)
+        message (String)
+        user messages (List)
+"""
 @app.route("/get_user_messages_by_email/<email>", methods = ['GET'])
 def get_user_messages_by_email(email):
     token = request.headers.get('Authorization')
@@ -157,6 +229,14 @@ def get_user_messages_by_email(email):
     else:
         return res, 401
 
+"""
+Input:  email (String)
+        message (String)
+        location (String)
+        token (String)
+Output: success (Boolean)
+        message (String)
+"""
 @app.route("/post_message/", methods = ['POST'])
 def post_message():
     data = request.get_json()
@@ -171,6 +251,5 @@ def post_message():
         return res, 401 
 
 if __name__ == '__main__':
-    #app.run()
     socketio.run(app, debug=True, port=5004)
 
