@@ -1,6 +1,3 @@
-
-// var socket = null;
-
 /* Displayes a view */
 displayView = function(view) {
   if (view == "profile") {
@@ -14,7 +11,6 @@ displayView = function(view) {
 /* Code is executed as page is loaded */
 window.onload = function() {
   let token = localStorage.getItem("token");
-  
   if (token) {
     window.document.getElementById("container").innerHTML = window.document.getElementById("profileview").innerHTML;
     showPanel(localStorage.getItem('lastPanel'));
@@ -30,7 +26,6 @@ validatePassword = function() {
   const inputPass = window.document.getElementById("password-input");
   const inputPassRp = window.document.getElementById("password-input-rp");
   
-  console.log(document.getElementById("password-input").value.length);
   if (document.getElementById("password-input").value != document.getElementById("password-input-rp").value) {
     inputPassRp.setCustomValidity('Password does not match!!!');
     inputPassRp.reportValidity();
@@ -63,7 +58,6 @@ validateEmail = function(process) {
     return false;
   }
   return true;
-
 }
 
 /* Validation of input. There should be no blanks */
@@ -105,9 +99,7 @@ signUp = function() {
                     let token = JSON.parse(signin_req.responseText)['data'];
                     localStorage.setItem("token", token);
                     console.log("signup: ", localStorage.getItem("token"));
-                    displayView("profile", token);
-                    
-                      
+                    displayView("profile", token);                
                     handleSocket();    
                 }else {
                   const inputEmail = window.document.getElementById("email-input");
@@ -131,16 +123,23 @@ signUp = function() {
   }
 }
 
+/* handel the message from server side */
 handleSocket = function() {
   let socket = io.connect()
   socket.on('connect', function() {
     socket.emit('connection', token);
   });
+  /* 
+    log out when user try to login through another browser
+  */
   socket.on('discontinue', (sres) => {
     console.log(sres['message'])
     localStorage.removeItem("token");
     window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
   })
+  /* 
+    update userinformation in donut chart
+  */
   socket.on('userUpdate', (msg) => {
     console.log('Received message: ', msg);
     logginRegisterRatio = []
@@ -148,12 +147,16 @@ handleSocket = function() {
     logginRegisterRatio.push(['# of Registered User', msg['registeredUser']]);
     donutChart('#logginRegisterRatio', logginRegisterRatio, '# of onlineUser and RegisteredUser');
   });
+  /* 
+    update number of posts
+  */
   socket.on('messageUpdate', (msg) => {
     console.log('Received message: ', msg);
     document.getElementById("postcount").innerText = msg['messageCount'];
   });
 }
 
+/* Task 1 : Providing Live Data Presentation */
 function donutChart(id, data, title) {
   c3.generate({
     bindto: id,
@@ -197,34 +200,15 @@ signIn = function() {
             let token = JSON.parse(signin_req.responseText)['data'];
             localStorage.setItem("token", token);
             displayView("profile", token);
-            
             handleSocket();
-            
-            /*
-            socket.on('connect', function() {
-              socket.emit('connection', token);
-            });
-            socket.on('discontinue', (sres) => {
-              console.log(sres['message'])
-              localStorage.removeItem("token");
-              window.document.getElementById("container").innerHTML = window.document.getElementById("welcomeview").innerHTML;
-            })
-            socket.on('userUpdate', function(msg) {
-              console.log('Received message: ', msg);
-          });*/
-            
-
         }else {
           let resp = JSON.parse(signin_req.responseText);
-
           const loginButton = window.document.getElementById("login-button");
           loginButton.setCustomValidity(resp['message']);
           loginButton.reportValidity();
           return;
         }
-
     }
-
   }
   signin_req.send(JSON.stringify(signin_data));
 }
@@ -245,13 +229,12 @@ signOut = function() {
           console.log(resp.message);
           return;
         }
-
     }
-
   }
   signout_req.send();
 }
  
+/* change the view while clicking on the tab */
 showPanel = function(panelName) {
   localStorage.setItem('lastPanel', panelName);
   if(panelName == 'homePanel') {
@@ -279,6 +262,7 @@ showPanel = function(panelName) {
   }
 }
 
+/* get the user information and show on the table */
 populateInformation = function() {
   token = localStorage.getItem("token");
   let getdata_req = new XMLHttpRequest();
@@ -346,6 +330,7 @@ changeActPassword = function() {
   changepw_req.send(JSON.stringify(pw_data));
 }
 
+/* update the user his/her own wall */
 updateWall = function() {
   const token = localStorage.getItem("token");
   let getmessages_req = new XMLHttpRequest();
@@ -388,6 +373,7 @@ updateWall = function() {
   getmessages_req.send();
 }
 
+/* post message on his/her own wall */
 postMessage = async function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('user-text-box').value;
@@ -437,6 +423,7 @@ postMessage = async function() {
   getdata_req.send();
 }
 
+/* get friend's information and show on browse view */
 getUserInformation = function() {
   const token = localStorage.getItem("token");
   let email = document.getElementById("search-user-input").value;
@@ -470,6 +457,7 @@ getUserInformation = function() {
   getdata_req.send();
 }
 
+/* update friend's own wall */
 updateUserWall = function() {
   let token = localStorage.getItem("token");
   let email = document.getElementById("friend-email-text").innerText;
@@ -514,6 +502,7 @@ updateUserWall = function() {
   getmessages_req.send();
 }
 
+/* send message on friend's own wall */
 sendMessage = async function() {
   let token = localStorage.getItem("token");
   let msg = document.getElementById('friend-text-box').value;
@@ -540,6 +529,7 @@ sendMessage = async function() {
   postmessage_req.send(JSON.stringify(data));
 }
 
+/* Task 2 : Use of HTML5 for Drag and Drop */
 function allowDrop(ev) {
   ev.preventDefault();
 }
@@ -551,19 +541,19 @@ function drag(ev) {
 function drop(ev) {
   ev.preventDefault();
   var data = ev.dataTransfer.getData("text");
-  //console.log(document.getElementById(data).innerHTML);
-  //console.log(ev.target);
   ev.target.value = document.getElementById(data).innerHTML;
 }
 
+/* Task 11 : Geolocation */
 const getLocation = async () => {
-  //let country = '';
   return new Promise((resolve, reject) => {
     if (navigator.geolocation) {
+      /* get the latitude and longtitude from html location */
       navigator.geolocation.getCurrentPosition((position) => {
         let latitude = JSON.stringify(position.coords.latitude);
         let longitude = JSON.stringify(position.coords.longitude);
         console.log(latitude,longitude);
+        /* call the api nominatim and get current position */
         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=`+latitude+`&lon=`+longitude)
           .then((response) => response.json())
           .then((data) => {
