@@ -21,6 +21,7 @@ def handleConnection(token):
         email = resp["data"]["email"]
         sid_dict[email] = request.sid
         handle_update()
+        handle_message_count(email)
     else:
         print(resp)
 
@@ -55,11 +56,9 @@ def sign_in():
                 token += letters[math.floor(random.random() * len(letters))]
             
             database_helper.add_token(param['email'], token)
-
             if data["email"] in sid_dict:
                 socketio.emit('discontinue', {"message": f"{data['email']} is already logged in: Discontinuing older connection"}, to=sid_dict[data["email"]])
                 del sid_dict[data["email"]]
-                
             
             return {"success": True, "message": "Successfully signed in.", "data": token}, 201
             

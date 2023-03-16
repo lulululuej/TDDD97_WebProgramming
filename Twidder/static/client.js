@@ -150,6 +150,7 @@ handleSocket = function() {
   });
   socket.on('messageUpdate', (msg) => {
     console.log('Received message: ', msg);
+    document.getElementById("postcount").innerText = msg['messageCount'];
   });
 }
 

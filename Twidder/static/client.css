@@ -331,6 +331,21 @@ h1 {
 #funstuff-panel {
     width: 100%;
 }
+#postcountContainer {
+    flex-direction: column;
+    width: 100%;
+}
+#postcountDiv {
+    width: 100%;
+}
+#postcount {
+    width: 100%;
+    text-align: center;
+    font-size: xx-large;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bolder;
+}
+
 #signin-text {
     display: none;
 }
